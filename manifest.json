@@ -1,0 +1,12 @@
+{"manifest_version": 2,
+    "name":"Aligupedia",
+    "description": "Aligulac on Liquipedia",
+    "version": "0.01",
+    "permissions": [
+        "activeTab"
+      ],
+    "content_scripts":[{
+        "matches": ["https://liquipedia.net/starcraft2*"],
+        "js":["functional.js"]
+    }]
+    }
