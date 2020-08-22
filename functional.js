@@ -4,7 +4,7 @@ const contentArea = document.getElementById("main-content-column")
 console.log(contentArea)
 let playerToFind;
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
-
+let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
 function findPlayer(event){
     const playerToFetch = whatIsSelected(event.target.innerText)
@@ -12,8 +12,8 @@ function findPlayer(event){
         errorMessage();
         return -1;
     }
-    //const aligulacStats=fetchData(playerToFetch)
-    let data = sendData(playerToFetch)
+    console.log(playerToFetch)
+    const data = fetchPlayerData(playerToFetch)
     console.log(data)
 }
 
@@ -27,25 +27,9 @@ function whatIsSelected(contentString){
 function errorMessage(){
     alert()
 }
-// console.log(sendData('Rogue'))
-function sendData(playerIn){
-//     var port = chrome.runtime.connect({name: "knockknock"});
-// port.postMessage({player:playerIn});
-// port.onMessage.addListener(function(msg) {
-//  console.log(msg)
-// });
-chrome.runtime.sendMessage({player: playerIn}, (response)=> {
-   console.log(response)
-})
-    // return new Promise((resolve, reject)=>{
-    //     chrome.runtime.sendMessage({player: playerIn}, (response)=> {
-    //         if(response.complete) {
-    //             resolve()
-    //             console.log(123, response)
-    //         }
-    //         else{
-    //             reject('Something Wrong')
-    //         }
-    //     })
-    // })
+
+function fetchPlayerData(playerIn){
+    chrome.runtime.sendMessage({player: playerIn, apiKey: apiKey}, (response)=> {
+    console.log(response)
+    })
 }
