@@ -3,9 +3,11 @@ chrome.runtime.onMessage.addListener(
      (request, sender, sendResponse) => {
        (async ()=>{
         let data = await fetchByName(request)
+
         // data = await fetchByIds(data, request.apiKey)
         data = await fetchByIds(data, request.player)
        console.log('finalData', data)
+       
         sendResponse({aliData:data})
        })()
        return true;
@@ -26,14 +28,8 @@ async function fetchByName(request){
     })
    return fetchedByName.json()
 }
-async function fetchByIds(aliObject, playerName){
-  const idsArray = [];
-    aliObject.players.forEach(player=>{
-      idsArray.push(player.id)
-    })
-    const resultsArray = []
-    idsArray.forEach(async (id) =>  {
-      const fetchedById = await fetch(`http://aligulac.com/players/${id}-${playerName}`,
+async function fetchById(id, playerName){
+  const fetchedById = await fetch(`http://aligulac.com/players/${id}-${playerName}`,
   {
           'method':'GET',
           'headers':{
@@ -43,16 +39,33 @@ async function fetchByIds(aliObject, playerName){
 
           }
   })
-  // //fetchedById.body.read().then
-  const reader = fetchedById.body.getReader()
-  let resOut
-  reader.read().then((result)=> {
-    resOut = new TextDecoder("utf-8").decode(result.value)
-    console.log(resOut)
-    resultsArray.push(resOut)
-  })
-  })
-    return resultsArray
+  const returnValue = await readThePage(fetchedById)
+  console.log(returnValue)
+  return returnValue
+}
+async function readThePage(page){
+  const reader = page.body.getReader()
+  const readFile = await reader.read()
+  const resOut = new TextDecoder("utf-8").decode(readFile.value)
+  const winrates = resOut.match(/\d\d.\d\d%\s\(.+?\)/g)
+  const elo = resOut.match(/\d{3,}(?=\s±)/g)
+  if(winrates && elo){
+    const returnValue = {winrates:winrates.splice(0,4), elo:elo.splice(0,4)}
+    return returnValue
+  }
+}
+async function fetchByIds(aliObject, playerName, ){
+  const idsArray = [];
+    aliObject.players.forEach(player=>{
+      idsArray.push(player.id)
+    })
+   const resultsArray = []
+   for(let i = 0; i<idsArray.length; i++){
+      const fetchedSingle = await fetchById(idsArray[i], playerName)
+      console.log(fetchedSingle)
+      resultsArray.push(fetchedSingle)
+  }
+  return resultsArray
 }
 //FETCH BY IDS BY API. DOESNT RETURN WIN/LOSS
 // async function fetchByIds(aliObject, apiKey){

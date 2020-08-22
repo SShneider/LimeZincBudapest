@@ -6,14 +6,14 @@ let playerToFind;
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
 let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
-function findPlayer(event){
+async function findPlayer(event){
     const playerToFetch = whatIsSelected(event.target.innerText)
     if(playerToFetch===-1){
         errorMessage();
         return -1;
     }
     console.log(playerToFetch)
-    const data = fetchPlayerData(playerToFetch)
+    const data = await fetchPlayerData(playerToFetch)
     console.log(data)
 }
 
