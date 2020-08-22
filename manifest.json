@@ -3,10 +3,15 @@
     "description": "Aligulac on Liquipedia",
     "version": "0.01",
     "permissions": [
-        "activeTab"
+        "activeTab",
+        "http://aligulac.com/*"
       ],
     "content_scripts":[{
         "matches": ["https://liquipedia.net/starcraft2*"],
         "js":["functional.js"]
-    }]
+    }],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+      }
     }
