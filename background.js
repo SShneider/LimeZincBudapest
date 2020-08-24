@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(
         data = await fetchByIds(data, request.player)
        console.log('finalData', data)
        
-        sendResponse({aliData:data})
+        sendResponse({aliData:data, action: 'playerDataReturn'})
        })()
        return true;
   });
