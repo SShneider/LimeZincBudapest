@@ -62,9 +62,9 @@ function createElementFromHTML(htmlString) {
     // Change this to div.childNodes to support multiple top-level nodes
     return tableOut
 }
-const playerTable = createElementFromHTML(htmlString)
-const parentArea = document.getElementById("mw-content-text")
+// const playerTable = createElementFromHTML(htmlString)
+// const parentArea = document.getElementById("mw-content-text")
 
-//console.log(playerTable)
-parentArea.appendChild(playerTable)
+// //console.log(playerTable)
+// parentArea.appendChild(playerTable)
 //parentArea.style.position = "relative"
