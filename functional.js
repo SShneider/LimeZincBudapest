@@ -1,5 +1,7 @@
+
 console.log('connected')
 const contentArea = document.getElementById("main-content-column")
+
 
 console.log(contentArea)
 let playerToFind;

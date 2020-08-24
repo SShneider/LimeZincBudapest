@@ -8,7 +8,7 @@
       ],
     "content_scripts":[{
         "matches": ["https://liquipedia.net/starcraft2*"],
-        "js":["functional.js"]
+        "js":["functional.js", "generatePlayerTemplate.js"]
     }],
     "background": {
         "scripts": ["background.js"],
