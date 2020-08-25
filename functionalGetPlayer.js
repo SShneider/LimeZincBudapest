@@ -12,7 +12,7 @@ closeTableArea.addEventListener("click", removeGeneratedTable)
 let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
 async function findPlayer(event){
-    let race = "R"
+    let race
     try{
         if(event.target.nodeName==="TD"){
             const listOfLinks = event.target.getElementsByTagName("a")
@@ -32,31 +32,31 @@ async function findPlayer(event){
         }catch{
             return -1
         }
-
+    if(!race) race = "R"    
     const playerToFetch = whatIsSelected(event.target.innerText)
-    console.log(playerToFetch)
     if(playerToFetch===-1){
         return -1;
     }
 
     const flag = event.target.getElementsByClassName("flag")[0] 
     let country = ""
-    if(flag.getElementsByTagName("a").length) {
-        country = flag.getElementsByTagName("a")[0].title
-        }
-    else if(flag.getElementsByTagName("img").length){
-        country = flag.getElementsByTagName("img")[0].title
-        } 
+    let flagElement = ""
+    if(flag){
+        flagElement = flag.innerHTML
+        if(flag.getElementsByTagName("a").length) {
+            country = flag.getElementsByTagName("a")[0].title
+            }
+        else if(flag.getElementsByTagName("img").length){
+            country = flag.getElementsByTagName("img")[0].title
+            }
+    }
     if(country in countryDict){
             country = countryDict[country]
         }else if(country.length){
             country = country[0]
         }
 
-    
-   
-
-    const playerTable=createElementFromHTML(event.pageX, event.pageY, flag.innerHTML, raceIconMap[race], playerToFetch)
+    const playerTable=createElementFromHTML(event.pageX, event.pageY, flagElement, raceIconMap[race], playerToFetch)
     contentArea.append(playerTable)
     await fetchPlayerData(playerToFetch, race[0], country)
 
@@ -86,6 +86,8 @@ function fetchPlayerData(playerIn, raceIn, countryIn){
         }else{
             displayPlayerInfo(response.aliData, 0)
         }
+    }else{
+        errorMessage()
     }
     })
 }
@@ -101,12 +103,8 @@ function displayPlayerInfo(playerData, i){
     const vTelo= document.getElementsByClassName("vTelo")[i]
     const vZ = document.getElementsByClassName("vZ")[i]
     const vZelo = document.getElementsByClassName("vZelo")[i]
-    let winningsData = 0
-    let playerName = "Not Available"
-    if(playerData[i].winnings) winningsData = playerData[i].winnings
-    if(playerData[i].name) playerName = playerData[i].name
-    realName.innerText=playerName
-    winnings.innerHTML="<b>Total Winnings:</b> "+winningsData
+    realName.innerText=playerData[i].name
+    winnings.innerHTML="<b>Total Winnings:</b> "+playerData[i].winnings
     overall.innerText=playerData[i].winrates[0]
     vP.innerText = playerData[i].winrates[1]
     vT.innerText = playerData[i].winrates[2]
