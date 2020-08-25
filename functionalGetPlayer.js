@@ -4,25 +4,31 @@ const contentArea = document.getElementById("main-content-column")
 
 
 console.log(contentArea)
-let playerToFind;
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
 let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
 async function findPlayer(event){
-    console.log(event)
+    //console.log(event.target.innerHTML)
     const playerToFetch = whatIsSelected(event.target.innerText)
     if(playerToFetch===-1){
         errorMessage();
         return -1;
     }
     //console.log(playerToFetch)
-    const playerTable=createElementFromHTML(event.pageX, event.pageY)
+    const playerHeader = event.target.innerHTML
+    const playerTable=createElementFromHTML(event.pageX, event.pageY, playerHeader)
     contentArea.append(playerTable)
     await fetchPlayerData(playerToFetch)
     //console.log('Data: ', data)
 }
 
 function whatIsSelected(contentString){
+   // let contentString = target.innerText
+    
+    // const flag = target.getElementsByClassName("flag")[0]
+    // const race = taget
+  
+    
     if(!contentString.length) return -1;
     contentString = contentString.trim().split(/\s+/)
     if(!contentString.length>2) return -1;
@@ -48,62 +54,66 @@ function displayPlayerInfo(playerData){
 
 }
 
-const htmlString = `<tbody>
-<tr>
-    <th colspan="7" style="text-align: center;">
-        <span class="glag">Player Flag</span>
-        <span>Player Name</span>
-    </th>
-</tr>
-<tr>
-    <td colspan="7" style="
-            background-color: #f2f2f2;
-            font-size: 85%;
-            line-height: 90%;
-            height: 13px;
-            text-align: center;
-        ">
-        <span id="testfield"><div class="loader"></div></span>
-    </td>
-</tr>
-<tr>
-    <td colspan="3" style="text-align: left;" class="grouptableslot">
+
+
+
+function createElementFromHTML(X, Y, playerHeader) {
+    let htmlString = 
+    `<tbody>
+        <tr>
+            <th colspan="7" style="text-align: center;">
+                ${playerHeader}
+            </th>
+        </tr>
+        <tr>
+            <td colspan="7" style="
+                    background-color: #f2f2f2;
+                    font-size: 85%;
+                    line-height: 90%;
+                    height: 13px;
+                    text-align: center;
+                ">
+                <span id="testfield"><div class="loader"></span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left;" class="grouptableslot">
+        
+            </td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left;" class="grouptableslot">
+                &nbsp;<a href="/starcraft2/Protoss" title="Protoss"><img alt="" src="/commons/images/a/ab/Picon_small.png"
+                        width="17" height="15" loading="lazy" /></a>
+            </td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left;" class="grouptableslot">
+                &nbsp;<a href="/starcraft2/Terran" title="Terran"><img alt="" src="/commons/images/9/9d/Ticon_small.png"
+                        width="17" height="15" loading="lazy" /></a>
+            </td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: left;" class="grouptableslot">
+                &nbsp;<a href="/starcraft2/Zerg" title="Zerg"><img alt="" src="/commons/images/c/c9/Zicon_small.png"
+                        width="17" height="15" loading="lazy" /></a>
+            </td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+            <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
+        </tr>
+        </tbody>
+        `
   
-    </td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-</tr>
-<tr>
-    <td colspan="3" style="text-align: left;" class="grouptableslot">
-        &nbsp;<a href="/starcraft2/Protoss" title="Protoss"><img alt="" src="/commons/images/a/ab/Picon_small.png"
-                width="17" height="15" loading="lazy" /></a>
-    </td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-</tr>
-<tr>
-    <td colspan="3" style="text-align: left;" class="grouptableslot">
-        &nbsp;<a href="/starcraft2/Terran" title="Terran"><img alt="" src="/commons/images/9/9d/Ticon_small.png"
-                width="17" height="15" loading="lazy" /></a>
-    </td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-</tr>
-<tr>
-    <td colspan="3" style="text-align: left;" class="grouptableslot">
-        &nbsp;<a href="/starcraft2/Zerg" title="Zerg"><img alt="" src="/commons/images/c/c9/Zicon_small.png"
-                width="17" height="15" loading="lazy" /></a>
-    </td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-    <td style="width: 32px; white-space: pre; text-align:center;"><b><div class="loader"></b></td>
-</tr>
-</tbody>
-`
-
-
-function createElementFromHTML(X, Y) {
+    const genTable =  document.getElementById("generatedTable")
+    if (genTable) genTable.remove()
     let  tableOut = document.createElement('table');
-    tableOut.classList.add("matchlist", "wikitable")
+    tableOut.classList.add("matchlist", "wikitable", "aliTable")
     tableOut.setAttribute('id', 'generatedTable')
     tableOut.innerHTML = htmlString.trim();
     tableOut.style.position = "absolute"
