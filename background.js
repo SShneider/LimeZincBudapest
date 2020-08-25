@@ -68,6 +68,7 @@ async function fetchByIds(playersIn, playerName){
     playersIn.forEach(player=>{
       idsArray.push(player.id)
     })
+
   const resultsArray = []
   for(let i = 0; i<idsArray.length; i++){
       const fetchedSingle = await fetchById(idsArray[i], playerName)
@@ -104,7 +105,8 @@ async function readThePage(page){
   const reader = page.body.getReader()
   const readFile = await reader.read()
   const resOut = new TextDecoder("utf-8").decode(readFile.value).substring(10000, 40000) //limits html document to about start(Winrate v All) and end(winnings)
-  const winrates = resOut.match(/\d+.\d\d%\s\(.+?\)/g) //Format: 69.47% (1820/2620)
+  console.log(resOut)
+  const winrates = resOut.match(/\d+\.\d\d%\s\(.+?\)/g) //Format: 9.47% (1820/2620)
   const elo = resOut.match(/\d{3,}(?=\s±)/g) //Format: 319 lookahead: ±
   const winnings = resOut.match(/\$.+(?=<)/) //Format: $849,516 lookahead: html tag "<"
   const idxName = Math.max(resOut.indexOf("Romanized name"), resOut.indexOf("Full name"))// regex couldn't handle newlines. 
