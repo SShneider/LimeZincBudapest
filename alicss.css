@@ -1,4 +1,6 @@
-
+.gen{
+  font-weight: bold;
+}
 .loader {
 
     width: 1em;

@@ -5,6 +5,7 @@ chrome.runtime.onMessage.addListener(
         let data = await fetchByName(request)
 
         // data = await fetchByIds(data, request.apiKey)
+        console.log(123, data)
         data = await fetchByIds(data, request.player)
        console.log('finalData', data)
        
@@ -46,13 +47,28 @@ async function fetchById(id, playerName){
 async function readThePage(page){
   const reader = page.body.getReader()
   const readFile = await reader.read()
-  const resOut = new TextDecoder("utf-8").decode(readFile.value)
+  const resOut = new TextDecoder("utf-8").decode(readFile.value).substring(10000, 40000)
+  //console.log(resOut.length)114151
   const winrates = resOut.match(/\d\d.\d\d%\s\(.+?\)/g)
   const elo = resOut.match(/\d{3,}(?=\s±)/g)
-  if(winrates && elo){
-    const returnValue = {winrates:winrates.splice(0,4), elo:elo.splice(0,4)}
-    return returnValue
+  const winnings = resOut.match(/\$.+(?=<)/)
+  const idxName = Math.max(resOut.indexOf("Romanized name"), resOut.indexOf("Full name"))
+  let name=""
+  if(idxName!==-1){
+    const nameString = resOut.substring(idxName, idxName+100)
+    //console.log(nameString)
+    const startOfName = nameString.indexOf("<td>")+4
+    const endOfName = nameString.indexOf("</tr>")-18
+    name = nameString.substring(startOfName, endOfName)
   }
+  //console.log(name)
+  let returnValue = {name:name}
+  if(winrates && elo){
+    returnValue.winrates=winrates.splice(0,4)
+    returnValue.elo=elo.splice(0,4)
+  }
+  if(winnings) returnValue.winnings = winnings[0]
+  return returnValue
 }
 async function fetchByIds(aliObject, playerName, ){
   const idsArray = [];
