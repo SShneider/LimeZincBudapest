@@ -19,7 +19,9 @@ async function findPlayer(event){
         return -1;
     }
     //console.log(playerToFetch)
-    const flag = event.target.getElementsByClassName("flag")[0].innerHTML
+    const flag = event.target.getElementsByClassName("flag")[0] 
+    let country = flag.getElementsByTagName("a")[0].title
+    if(country==="South Korea") country = "K"
     let race
     //if(event.target.className.indexOf("grouptableslot")!==-1)
     if(event.target.nodeName==="TD"){
@@ -32,9 +34,9 @@ async function findPlayer(event){
     else return -1
     //console.log(event.target.attributes.style.value.substring(16,20))
      //= event.target.getElementsByTagName("a")[1].innerHTML
-    const playerTable=createElementFromHTML(event.pageX, event.pageY, flag, raceIconMap[race], playerToFetch)
+    const playerTable=createElementFromHTML(event.pageX, event.pageY, flag.innerHTML, raceIconMap[race], playerToFetch)
     contentArea.append(playerTable)
-    await fetchPlayerData(playerToFetch)
+    await fetchPlayerData(playerToFetch, race[0], country[0])
     //console.log('Data: ', data)
 }
 
@@ -55,8 +57,8 @@ function errorMessage(){
     alert()
 }
 
-function fetchPlayerData(playerIn){
-    chrome.runtime.sendMessage({player: playerIn, apiKey: apiKey}, (response)=> {
+function fetchPlayerData(playerIn, raceIn, countryIn){
+    chrome.runtime.sendMessage({player: playerIn, country: countryIn, race: raceIn, apiKey: apiKey}, (response)=> {
     console.log(response)
     if(response && response.action==="playerDataReturn"){
         displayPlayerInfo(response.aliData, 0)
@@ -76,7 +78,7 @@ function displayPlayerInfo(playerData, i){
     const vZ = document.getElementsByClassName("vZ")[i]
     const vZelo = document.getElementsByClassName("vZelo")[i]
     realName.innerText=playerData[i].name
-    winnings.innerText=playerData[i].winnings
+    winnings.innerHTML="<b>Total Winnings:</b> "+playerData[i].winnings
     overall.innerText=playerData[i].winrates[0]
     vP.innerText = playerData[i].winrates[1]
     vT.innerText = playerData[i].winrates[2]

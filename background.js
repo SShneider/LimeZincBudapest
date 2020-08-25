@@ -5,7 +5,12 @@ chrome.runtime.onMessage.addListener(
         let data = await fetchByName(request)
 
         // data = await fetchByIds(data, request.apiKey)
+        console.log(request)
         console.log(123, data)
+        if(data && data.players){
+          data = data.players.filter(playerF => playerF.tag===request.player && playerF.race===request.race && (playerF.country===null || playerF.country[0]===request.country))
+        }
+        console.log(456, data)
         data = await fetchByIds(data, request.player)
        console.log('finalData', data)
        
@@ -70,9 +75,9 @@ async function readThePage(page){
   if(winnings) returnValue.winnings = winnings[0]
   return returnValue
 }
-async function fetchByIds(aliObject, playerName, ){
+async function fetchByIds(playersIn, playerName){
   const idsArray = [];
-    aliObject.players.forEach(player=>{
+    playersIn.forEach(player=>{
       idsArray.push(player.id)
     })
    const resultsArray = []
