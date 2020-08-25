@@ -1,22 +1,38 @@
-
-console.log('connected')
+//console.log('connected')
 const contentArea = document.getElementById("main-content-column")
+const colorMap = {251:"Zerg", 222: "Terran", 221: "Protoss", 0: "Protoss", 1: "Terran", 2: "Zerg"}
+const terranString = `<a href="/starcraft2/Terran" title="Terran"><img alt="" src="/commons/images/9/9d/Ticon_small.png" width="17" height="15" loading="lazy"></a>`
+const zergString = `<a href="/starcraft2/Zerg" title="Zerg"><img alt="" src="/commons/images/c/c9/Zicon_small.png" width="17" height="15" loading="lazy"></a>`
+const protossString = `<a href="/starcraft2/Protoss" title="Protoss"><img alt="" src="/commons/images/a/ab/Picon_small.png" width="17" height="15" loading="lazy"></a>`
+const raceIconMap = { Zerg: zergString, Terran: terranString, Protoss: protossString}
 
-
-console.log(contentArea)
+//console.log(contentArea)
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
 let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
 async function findPlayer(event){
-    //console.log(event.target.innerHTML)
+    console.log(event)
+    //console.log(event.target.attributes.style.value)
     const playerToFetch = whatIsSelected(event.target.innerText)
     if(playerToFetch===-1){
         errorMessage();
         return -1;
     }
     //console.log(playerToFetch)
-    const playerHeader = event.target.innerHTML
-    const playerTable=createElementFromHTML(event.pageX, event.pageY, playerHeader)
+    const flag = event.target.getElementsByClassName("flag")[0].innerHTML
+    let race
+    //if(event.target.className.indexOf("grouptableslot")!==-1)
+    if(event.target.nodeName==="TD"){
+        const listOfLinks = event.target.getElementsByTagName("a")
+
+        if(listOfLinks && listOfLinks.length === 3 && listOfLinks[1].title in raceIconMap) race = listOfLinks[1].title
+        else race = colorMap[event.target.cellIndex]
+    } 
+    else if(event.target.getElementsByTagName("a")) race = colorMap[event.target.attributes.style.value.substring(16,19)]
+    else return -1
+    //console.log(event.target.attributes.style.value.substring(16,20))
+     //= event.target.getElementsByTagName("a")[1].innerHTML
+    const playerTable=createElementFromHTML(event.pageX, event.pageY, flag, raceIconMap[race], playerToFetch)
     contentArea.append(playerTable)
     await fetchPlayerData(playerToFetch)
     //console.log('Data: ', data)
@@ -57,12 +73,14 @@ function displayPlayerInfo(playerData){
 
 
 
-function createElementFromHTML(X, Y, playerHeader) {
+function createElementFromHTML(X, Y, flag, race, player) {
     let htmlString = 
     `<tbody>
         <tr>
             <th colspan="7" style="text-align: center;">
-                ${playerHeader}
+                <span class="flag">${flag}</span>
+                <span>${race}</span>
+                <span>${player}</span>
             </th>
         </tr>
         <tr>
