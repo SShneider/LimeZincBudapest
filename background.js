@@ -71,14 +71,14 @@ async function fetchByIds(playersIn, playerName){
 
   const resultsArray = []
   for(let i = 0; i<idsArray.length; i++){
-      const fetchedSingle = await fetchById(idsArray[i], playerName)
+      const fetchedSingle = await fetchById(idsArray[i], playerName, playersIn[i])
       resultsArray.push(fetchedSingle)
   }
   return resultsArray
 }
 //END ITERATE THROUGH ALIGULAC API RESPONSE IF THERE ARE MULTIPLE PLAYERS//
 //START FETCH ALIGULAC PAGE DIRECTLY - ALIGULAC API DOES NOT PROVIDE WINRATES AND ELO//
-async function fetchById(id, playerName){
+async function fetchById(id, playerName, playerIn){
   let fetchedById
   let returnValue
   try{
@@ -97,6 +97,9 @@ async function fetchById(id, playerName){
     console.error(err)
     return "fetcherror"
   }
+  //returning country and race in case they are absent on liquipedia
+  if(playerIn.country) returnValue.country = playerIn.country
+  if(playerIn.race) returnValue.race = playerIn.race
   return returnValue
 }
 //END FETCH ALIGULAC PAGE DIRECTLY - ALIGULAC API DOES NOT PROVIDE WINRATES AND ELO//

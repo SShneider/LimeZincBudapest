@@ -1,30 +1,37 @@
-
 const contentArea = document.getElementById("main-content-column")
 const closeTableArea = document.getElementsByTagName("body")[0]
 const colorMap = {251:"Zerg", 222: "Terran", 221: "Protoss", 0: "Protoss", 1: "Terran", 2: "Zerg"}
 const terranString = `<a href="/starcraft2/Terran" title="Terran"><img alt="" src="/commons/images/9/9d/Ticon_small.png" width="17" height="15" loading="lazy"></a>`
 const zergString = `<a href="/starcraft2/Zerg" title="Zerg"><img alt="" src="/commons/images/c/c9/Zicon_small.png" width="17" height="15" loading="lazy"></a>`
 const protossString = `<a href="/starcraft2/Protoss" title="Protoss"><img alt="" src="/commons/images/a/ab/Picon_small.png" width="17" height="15" loading="lazy"></a>`
-const raceIconMap = { Zerg: zergString, Terran: terranString, Protoss: protossString}
+const raceIconMap = { Zerg: zergString, Terran: terranString, Protoss: protossString, Z: zergString, T: terranString, P: protossString}
 const countryDict = {"South Korea":"K", "Germany":"D", "Croatia":"H"}
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
 closeTableArea.addEventListener("click", () => removeGeneratedTable(event))
 let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
 async function findPlayer(event){
+    console.log(event.target)
     let race
     try{
         if(event.target.nodeName==="TD"){
             const listOfLinks = event.target.getElementsByTagName("a")
-            if(listOfLinks && listOfLinks.length === 3 && listOfLinks[1].title in raceIconMap){
-                race = listOfLinks[1].title
+            console.log(listOfLinks)
+            if(listOfLinks) 
+                if(listOfLinks.length === 3 && listOfLinks[1].title in raceIconMap){
+                    race = listOfLinks[1].title
+                }
+                else if(listOfLinks[0].title in raceIconMap){
+                    race = listOfLinks[0].title // unique case for expanded group stage.
                 }
             else {
-                race = colorMap[event.target.cellIndex]
+                race = colorMap[event.target.cellIndex]//participants list doesnt have race explicitly stated. Col 1 = P, 2 = T, 3 = Z
                 }
             }    
-        else if(event.target.getElementsByTagName("a")){
+        else if(event.target.className.includes("bracket-player-top") || event.target.className.includes("bracket-player.bottom")){
+            //Brackets are the only event where the element of origin is not a <TD>
             race = colorMap[event.target.attributes.style.value.match(/\d{3}/)]
+            //Brackets don't have race icons. Race is captured using distinct bg colors
             }
         else {
             return -1   
@@ -32,8 +39,8 @@ async function findPlayer(event){
         }catch{
             return -1
         }
-    if(!race) race = "R"    
-    const playerToFetch = whatIsSelected(event.target.innerText)
+    if(!race) race = "R"    //placeholder for when the race is not listed
+    const playerToFetch = whatIsSelected(event.target.innerText) //splices the name of the player out
     if(playerToFetch===-1){
         return -1;
     }
@@ -106,6 +113,12 @@ function createPlayerToggleButton(data, i){
     playerButtonArea.appendChild(playerButton)
 }
 function displayPlayerInfo(playerData, i){
+    //For when there is no race/flag on liquipedia or for expanded group view(no flag)
+    const aliRace = document.getElementById("aliRace")
+    const aliFlag = document.getElementById("aliFlag")
+    if(!aliRace.innerText && playerData[i].race) aliRace.innerHTML = raceIconMap[playerData[i].race]
+    if(!aliFlag.getElementsByTagName("a").length && playerData[i].country) aliFlag.innerText = playerData[i].country
+    //End
     const realName = document.getElementsByClassName("realName")[0]
     const winnings = document.getElementsByClassName("winnings")[0]
     const overall = document.getElementsByClassName("overall")[0]
@@ -136,8 +149,8 @@ function createElementFromHTML(X, Y, flag, race, player) {
     `<tbody>
         <tr>
             <th colspan="7" style="text-align: center;">
-                <span class="flag">${flag}</span>
-                <span>${race}</span>
+                <span class="flag" id="aliFlag">${flag}</span>
+                <span id="aliRace">${race}</span>
                 <span>${player}</span>
                 <span id="playerToggle"></span>
             </th>
