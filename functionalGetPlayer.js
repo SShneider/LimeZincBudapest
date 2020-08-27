@@ -8,7 +8,7 @@ const protossString = `<a href="/starcraft2/Protoss" title="Protoss"><img alt=""
 const raceIconMap = { Zerg: zergString, Terran: terranString, Protoss: protossString}
 const countryDict = {"South Korea":"K", "Germany":"D", "Croatia":"H"}
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
-closeTableArea.addEventListener("click", removeGeneratedTable)
+closeTableArea.addEventListener("click", () => removeGeneratedTable(event))
 let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
 async function findPlayer(event){
@@ -75,6 +75,7 @@ function errorMessage(notFound=0){
     const dummyPlayerData = [{name:  errorMsg, winnings: errorMsg, winrates: [errorMsg, errorMsg, errorMsg, errorMsg], elo: [errorMsg, errorMsg, errorMsg, errorMsg]}]
     displayPlayerInfo(dummyPlayerData, 0)
 }
+
 function fetchPlayerData(playerIn, raceIn, countryIn){
     chrome.runtime.sendMessage({player: playerIn, country: countryIn, race: raceIn, apiKey: apiKey}, (response)=> {
     if(response && response.action==="playerDataReturn"){
@@ -85,24 +86,36 @@ function fetchPlayerData(playerIn, raceIn, countryIn){
             errorMessage()
         }else{
             displayPlayerInfo(response.aliData, 0)
+            if(response.aliData.length>1){
+                for(let i=0; i<response.aliData.length; i++){
+                    createPlayerToggleButton(response.aliData, i)
+                }
+            }
         }
     }else{
         errorMessage()
     }
     })
 }
-
+function createPlayerToggleButton(data, i){
+    const playerButton = document.createElement("button")
+    playerButton.className = "playerButton"
+    playerButton.innerText = i+1
+    playerButton.addEventListener("click", () => displayPlayerInfo(data, i))
+    const playerButtonArea = document.getElementById("playerToggle")
+    playerButtonArea.appendChild(playerButton)
+}
 function displayPlayerInfo(playerData, i){
-    const realName = document.getElementsByClassName("realName")[i]
-    const winnings = document.getElementsByClassName("winnings")[i]
-    const overall = document.getElementsByClassName("overall")[i]
-    const overallElo = document.getElementsByClassName("overallElo")[i]
-    const vP = document.getElementsByClassName("vP")[i]
-    const vPelo = document.getElementsByClassName("vPelo")[i]
-    const vT = document.getElementsByClassName("vT")[i]
-    const vTelo= document.getElementsByClassName("vTelo")[i]
-    const vZ = document.getElementsByClassName("vZ")[i]
-    const vZelo = document.getElementsByClassName("vZelo")[i]
+    const realName = document.getElementsByClassName("realName")[0]
+    const winnings = document.getElementsByClassName("winnings")[0]
+    const overall = document.getElementsByClassName("overall")[0]
+    const overallElo = document.getElementsByClassName("overallElo")[0]
+    const vP = document.getElementsByClassName("vP")[0]
+    const vPelo = document.getElementsByClassName("vPelo")[0]
+    const vT = document.getElementsByClassName("vT")[0]
+    const vTelo= document.getElementsByClassName("vTelo")[0]
+    const vZ = document.getElementsByClassName("vZ")[0]
+    const vZelo = document.getElementsByClassName("vZelo")[0]
     realName.innerText=playerData[i].name
     winnings.innerHTML="<b>Total Winnings:</b> "+playerData[i].winnings
     overall.innerText=playerData[i].winrates[0]
@@ -126,6 +139,7 @@ function createElementFromHTML(X, Y, flag, race, player) {
                 <span class="flag">${flag}</span>
                 <span>${race}</span>
                 <span>${player}</span>
+                <span id="playerToggle"></span>
             </th>
         </tr>
         <tr>
@@ -196,7 +210,13 @@ function createElementFromHTML(X, Y, flag, race, player) {
     return tableOut
 }
 
-function removeGeneratedTable(){
+function removeGeneratedTable(event){
+    if(event){
+        for(let i = 0; i<event.path.length; i++){
+            if(event.path[i].id && event.path[i].id ==="generatedTable") return
+        }
+    }
+    //if(event && event.path.indexOf("table#generatedTable.matchlist.wikitable.aliTable")!==-1) return
     const genTable =  document.getElementById("generatedTable")
     if (genTable) genTable.remove()
 }

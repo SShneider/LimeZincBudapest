@@ -12,7 +12,7 @@ chrome.runtime.onMessage.addListener(
             errorStatus = data
           }else{
             data = await fetchByIds(data, request.player)
-            console.log(data)  
+            if(data === "fetcherror" || data === "notfound") errorStatus = data
           }
         }catch(err){
           console.error(err)         
@@ -105,7 +105,7 @@ async function readThePage(page){
   const reader = page.body.getReader()
   const readFile = await reader.read()
   const resOut = new TextDecoder("utf-8").decode(readFile.value).substring(10000, 40000) //limits html document to about start(Winrate v All) and end(winnings)
-  console.log(resOut)
+  if(!resOut.length) return "fetcherror"
   const winrates = resOut.match(/\d+\.\d\d%\s\(.+?\)/g) //Format: 9.47% (1820/2620)
   const elo = resOut.match(/\d{3,}(?=\s±)/g) //Format: 319 lookahead: ±
   const winnings = resOut.match(/\$.+(?=<)/) //Format: $849,516 lookahead: html tag "<"
@@ -117,12 +117,9 @@ async function readThePage(page){
     const endOfName = nameString.indexOf("</tr>")-18
     name = nameString.substring(startOfName, endOfName)
   }
-  let returnValue = {name: name, winnings: 0}
-  console.log(winrates, elo)
-  if(winrates && elo){
-    returnValue.winrates=winrates.splice(0,4)
-    returnValue.elo=elo.splice(0,4)
-  }
+  let returnValue = {name: name, winnings: 0, winrates: ["0/0","0/0","0/0","0/0"], elo: [0, 0, 0, 0]}
+  if(winrates) returnValue.winrates=winrates.splice(0,4)
+  if(elo) returnValue.elo=elo.splice(0,4)
   if(winnings) returnValue.winnings = winnings[0]
   return returnValue
 }
