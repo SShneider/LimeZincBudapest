@@ -72,6 +72,7 @@ async function fetchByIds(playersIn, playerName){
   const resultsArray = []
   for(let i = 0; i<idsArray.length; i++){
       const fetchedSingle = await fetchById(idsArray[i], playerName, playersIn[i])
+      if(fetchedSingle==="notfound" || fetchedSingle=="fetcherror") return fetchedSingle
       resultsArray.push(fetchedSingle)
   }
   return resultsArray

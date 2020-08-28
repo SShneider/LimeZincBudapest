@@ -1,22 +1,23 @@
 const contentArea = document.getElementById("main-content-column")
 const closeTableArea = document.getElementsByTagName("body")[0]
-const colorMap = {251:"Zerg", 222: "Terran", 221: "Protoss", 0: "Protoss", 1: "Terran", 2: "Zerg"}
-const terranString = `<a href="/starcraft2/Terran" title="Terran"><img alt="" src="/commons/images/9/9d/Ticon_small.png" width="17" height="15" loading="lazy"></a>`
-const zergString = `<a href="/starcraft2/Zerg" title="Zerg"><img alt="" src="/commons/images/c/c9/Zicon_small.png" width="17" height="15" loading="lazy"></a>`
-const protossString = `<a href="/starcraft2/Protoss" title="Protoss"><img alt="" src="/commons/images/a/ab/Picon_small.png" width="17" height="15" loading="lazy"></a>`
-const raceIconMap = { Zerg: zergString, Terran: terranString, Protoss: protossString, Z: zergString, T: terranString, P: protossString}
-const countryDict = {"South Korea":"K", "Germany":"D", "Croatia":"H"}
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
 closeTableArea.addEventListener("click", () => removeGeneratedTable(event))
-let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
-async function findPlayer(event){
-    console.log(event.target)
-    let race
+async function findPlayer(event, drawTable = 1){
+    if(event.target.innerText.indexOf("Group ")!==-1) return //blocks the function from executing when clicked on group title. 
+    const generatedRequest = generatePlayerRequest(event)
+    const {playerToFetch, flagElement, race, country} = generatedRequest
+    if(drawTable){
+        const playerTable=createElementFromHTML(event.pageX, event.pageY, flagElement, raceIconMap[race], playerToFetch)
+        contentArea.append(playerTable)
+    }
+     await fetchPlayerData(playerToFetch, race[0], country, drawTable)
+}
+function generatePlayerRequest(event){
+    let race = "R"
     try{
         if(event.target.nodeName==="TD"){
             const listOfLinks = event.target.getElementsByTagName("a")
-            console.log(listOfLinks)
             if(listOfLinks) 
                 if(listOfLinks.length === 3 && listOfLinks[1].title in raceIconMap){
                     race = listOfLinks[1].title
@@ -62,11 +63,7 @@ async function findPlayer(event){
         }else if(country.length){
             country = country[0]
         }
-
-    const playerTable=createElementFromHTML(event.pageX, event.pageY, flagElement, raceIconMap[race], playerToFetch)
-    contentArea.append(playerTable)
-    await fetchPlayerData(playerToFetch, race[0], country)
-
+    return {playerToFetch, flagElement, race, country}
 }
 
 function whatIsSelected(contentString){
@@ -83,11 +80,13 @@ function errorMessage(notFound=0){
     displayPlayerInfo(dummyPlayerData, 0)
 }
 
-function fetchPlayerData(playerIn, raceIn, countryIn){
+function fetchPlayerData(playerIn, raceIn, countryIn, fillTable){
     chrome.runtime.sendMessage({player: playerIn, country: countryIn, race: raceIn, apiKey: apiKey}, (response)=> {
     if(response && response.action==="playerDataReturn"){
-        console.log(response)
-        if(response.errorStatus==="notfound"){
+        if(!fillTable){
+            groupArray.push(response)
+        }
+        else if(response.errorStatus==="notfound"){
             errorMessage(1)
         }else if(response.errorStatus){
             errorMessage()
@@ -117,7 +116,7 @@ function displayPlayerInfo(playerData, i){
     const aliRace = document.getElementById("aliRace")
     const aliFlag = document.getElementById("aliFlag")
     if(!aliRace.innerText && playerData[i].race) aliRace.innerHTML = raceIconMap[playerData[i].race]
-    if(!aliFlag.getElementsByTagName("a").length && playerData[i].country) aliFlag.innerText = playerData[i].country
+    if(!aliFlag.getElementsByTagName("a").length && !aliFlag.getElementsByTagName("img").length  && playerData[i].country) aliFlag.innerText = playerData[i].country
     //End
     const realName = document.getElementsByClassName("realName")[0]
     const winnings = document.getElementsByClassName("winnings")[0]
