@@ -25,11 +25,11 @@ function generateGroupListeners(){
         let totalplayers = groupElements[i].getElementsByClassName("grouptableslot")
         let totalmatches = groupMatchesElements[i].getElementsByClassName("matchlistslot")
         if(totalplayers.length===4 && totalmatches.length===10) typeOfGroup = "gslFormat"
-        groupElements[i].getElementsByTagName("tbody")[0].childNodes[0].addEventListener("dblclick", ()=>generateGroupPredictions(event, groupElements[i], typeOfGroup))
+        groupElements[i].getElementsByTagName("tbody")[0].childNodes[0].addEventListener("dblclick", ()=>initiateGroupPredictions(event, groupElements[i], typeOfGroup))
     }
 }
 
-async function generateGroupPredictions(event, origin, typeOfGroup){
+async function initiateGroupPredictions(event, origin, typeOfGroup){
     groupArray = []
     let BoX = 0
     let nodeIterator = origin.parentNode
@@ -44,13 +44,22 @@ async function generateGroupPredictions(event, origin, typeOfGroup){
     }
     const theRule = nodeIterator.innerText.split("\n")[0]
     BoX = ruleString.substring(ruleString.indexOf(theRule)+theRule.length).match(/Bo\d/)[0][2]
-    let playerRequests = []
     const playersArray = [...origin.getElementsByClassName("grouptableslot")].filter(x=>x.parentNode.dataset.toggleAreaContent==="1")
     for(let i = 0; i<playersArray.length; i++){
-        playerRequests.push(generatePlayerRequest({target:playersArray[i]}, 0))
+        //current = {playerToFetch, flagElement, race, country}
+        let current = generatePlayerRequest({target:playersArray[i]}, 0)
+        if(playerIdsDict[current.playerToFetch]) continue
+        playerRequests.push(current)
     }
     playerRequests.forEach(request =>{
         const {playerToFetch, race, country} = request
         fetchPlayerData(playerToFetch, race, country, "predict")
     })
+}
+
+function processGroupResponse(){
+    groupArray.forEach(player =>{
+        playerIdsDict[player.tag] = player.id
+    })
+    console.log(playerIdsDict)
 }

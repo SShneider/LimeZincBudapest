@@ -16,5 +16,7 @@ const singleEleim = "predictsebracket"//number of players that is a power of 2
 const swiss = "predictrrgroup"
 //end aligulac strings//
 const singleMatchDict ={format: bestofN, bo: 1} //default dict
-let groupArray = []
+let groupArray = [] //returns an array of player ids from aligulac
+let playerRequests = [] //array of players listed on liquipedia, processed for backend requests
+let playerIdsDict = {} //list of aligulac playerIds already fetched Name:Id
 //END GENERATE PREDICTIONS VARIABLES//

@@ -19,12 +19,14 @@ function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn="getplayer"){
                     await fetchPlayerData(playerIn, raceIn, countryIn, predict)
                 }
                 else if(response.aliData.errorStats==="notfound"){
-                    groupArray.push("notfound")
+                   return "notfound"
                 }
                 else{
                     groupArray.push(response.aliData[0])
+                    if(groupArray.length===playerRequests.length){
+                        processGroupResponse()
+                    }
                 }
-                console.log(groupArray)
         }
     }else{
         errorMessage()
