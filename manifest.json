@@ -8,11 +8,11 @@
       ],
     "content_scripts":[{
         "matches": ["https://liquipedia.net/starcraft2*"],
-        "js":["functionalGetPlayer.js", "generatePredictions.js", "variables.js", "contentToBackend.js"],
+        "js":["contentScripts/functionalGetPlayer.js", "contentScripts/generateTables.js", "contentScripts/generatePredictions.js", "contentScripts/variables.js", "contentScripts/contentToBackend.js"],
         "css":["alicss.css"]
     }],
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["backgroundScripts/background.js", "backgroundScripts/bgPlayerInfo.js", "backgroundScripts/bgPredict.js"],
         "persistent": false
       }
     }
