@@ -16,5 +16,5 @@ const singleEleim = "predictsebracket"//number of players that is a power of 2
 const swiss = "predictrrgroup"
 //end aligulac strings//
 const singleMatchDict ={format: bestofN, bo: 1} //default dict
-const groupArray = []
+let groupArray = []
 //END GENERATE PREDICTIONS VARIABLES//

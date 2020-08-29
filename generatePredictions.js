@@ -30,7 +30,7 @@ function generateGroupListeners(){
 }
 
 async function generateGroupPredictions(event, origin, typeOfGroup){
-
+    groupArray = []
     let BoX = 0
     let nodeIterator = origin.parentNode
     while (nodeIterator){
@@ -45,9 +45,12 @@ async function generateGroupPredictions(event, origin, typeOfGroup){
     const theRule = nodeIterator.innerText.split("\n")[0]
     BoX = ruleString.substring(ruleString.indexOf(theRule)+theRule.length).match(/Bo\d/)[0][2]
     let playerRequests = []
-    const playersArray = origin.getElementsByClassName("grouptableslot")
+    const playersArray = [...origin.getElementsByClassName("grouptableslot")].filter(x=>x.parentNode.dataset.toggleAreaContent==="1")
     for(let i = 0; i<playersArray.length; i++){
         playerRequests.push(generatePlayerRequest({target:playersArray[i]}, 0))
     }
-    console.log(playerRequests)
+    playerRequests.forEach(request =>{
+        const {playerToFetch, race, country} = request
+        fetchPlayerData(playerToFetch, race, country, "predict")
+    })
 }

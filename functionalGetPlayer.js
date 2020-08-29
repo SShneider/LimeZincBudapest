@@ -3,15 +3,13 @@ const closeTableArea = document.getElementsByTagName("body")[0]
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
 closeTableArea.addEventListener("click", () => removeGeneratedTable(event))
 
-async function findPlayer(event, drawTable = 1){
+async function findPlayer(event){
     if(event.target.innerText.indexOf("Group ")!==-1) return //blocks the function from executing when clicked on group title. 
     const generatedRequest = generatePlayerRequest(event)
     const {playerToFetch, flagElement, race, country} = generatedRequest
-    if(drawTable){
-        const playerTable=createElementFromHTML(event.pageX, event.pageY, flagElement, raceIconMap[race], playerToFetch)
-        contentArea.append(playerTable)
-    }
-     await fetchPlayerData(playerToFetch, race[0], country, drawTable)
+    const playerTable=createElementFromHTML(event.pageX, event.pageY, flagElement, raceIconMap[race], playerToFetch)
+    contentArea.append(playerTable)
+    await fetchPlayerData(playerToFetch, race[0], country, "getplayer")
 }
 function generatePlayerRequest(event){
     let race = "R"
@@ -69,7 +67,9 @@ function generatePlayerRequest(event){
 function whatIsSelected(contentString){
     if(!contentString.length) return -1;
     contentString = contentString.trim().split(/\s+/)
-    if(!contentString.length>2) return -1;
+    if(!contentString.length>2) return -1; 
+    contentString = contentString[0].trim().split(/▲|▼/)
+    if(!contentString.length>2) return -1; 
     return contentString[0].trim()
 }
 
@@ -80,29 +80,7 @@ function errorMessage(notFound=0){
     displayPlayerInfo(dummyPlayerData, 0)
 }
 
-function fetchPlayerData(playerIn, raceIn, countryIn, fillTable){
-    chrome.runtime.sendMessage({player: playerIn, country: countryIn, race: raceIn, apiKey: apiKey}, (response)=> {
-    if(response && response.action==="playerDataReturn"){
-        if(!fillTable){
-            groupArray.push(response)
-        }
-        else if(response.errorStatus==="notfound"){
-            errorMessage(1)
-        }else if(response.errorStatus){
-            errorMessage()
-        }else{
-            displayPlayerInfo(response.aliData, 0)
-            if(response.aliData.length>1){
-                for(let i=0; i<response.aliData.length; i++){
-                    createPlayerToggleButton(response.aliData, i)
-                }
-            }
-        }
-    }else{
-        errorMessage()
-    }
-    })
-}
+
 function createPlayerToggleButton(data, i){
     const playerButton = document.createElement("button")
     playerButton.className = "playerButton"

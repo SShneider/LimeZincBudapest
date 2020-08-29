@@ -1,16 +1,16 @@
 chrome.runtime.onMessage.addListener(
      (request, sender, sendResponse) => {
        (async ()=>{
+         console.log(request.source)
         let data
         let errorStatus = 0
         try{
           data = await fetchByName(request)
           console.log(111, data)
           data = filterPlayer(data, request)
-          console.log(999, data)
           if(data === "fetcherror" || data === "notfound"){
             errorStatus = data
-          }else{
+          }else if(request.source==="getplayer"){
             data = await fetchByIds(data, request.player)
             if(data === "fetcherror" || data === "notfound") errorStatus = data
           }
@@ -19,7 +19,7 @@ chrome.runtime.onMessage.addListener(
           errorStatus = "fetcherror"
         }
         console.log(errorStatus)
-        sendResponse({aliData:data, action: 'playerDataReturn', errorStatus: errorStatus})
+        sendResponse({aliData:data, action: request.source, errorStatus: errorStatus})
        })()
        return true;
   });
