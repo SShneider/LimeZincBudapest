@@ -31,6 +31,8 @@ function generateGroupListeners(){
 
 async function initiateGroupPredictions(event, origin, typeOfGroup){
     groupArray = []
+    predictPlayersNames = []
+    playerRequests = []
     let BoX = 0
     let nodeIterator = origin.parentNode
     while (nodeIterator){
@@ -45,11 +47,13 @@ async function initiateGroupPredictions(event, origin, typeOfGroup){
     const theRule = nodeIterator.innerText.split("\n")[0]
     BoX = ruleString.substring(ruleString.indexOf(theRule)+theRule.length).match(/Bo\d/)[0][2]
     const playersArray = [...origin.getElementsByClassName("grouptableslot")].filter(x=>x.parentNode.dataset.toggleAreaContent==="1")
+    
     for(let i = 0; i<playersArray.length; i++){
         //current = {playerToFetch, flagElement, race, country}
         let current = generatePlayerRequest({target:playersArray[i]}, 0)
         if(playerIdsDict[current.playerToFetch]) continue
         playerRequests.push(current)
+        predictPlayersNames.push(current.playerToFetch)
     }
     playerRequests.forEach(request =>{
         const {playerToFetch, race, country} = request
@@ -61,5 +65,10 @@ function processGroupResponse(){
     groupArray.forEach(player =>{
         playerIdsDict[player.tag] = player.id
     })
-    console.log(playerIdsDict)
+    const playersToPredict = []
+    predictPlayersNames.forEach(name=>{
+        playersToPredict.push(playerIdsDict[name])
+    })
+    // fetchPlayerData args == (playerIn, raceIn, countryIn, sourceIn)
+    fetchPlayerData(playersToPredict.join(), 0, 0, "groupPredict")
 }

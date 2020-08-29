@@ -1,29 +1,53 @@
 chrome.runtime.onMessage.addListener(
      (request, sender, sendResponse) => {
        (async ()=>{
-         console.log(request.source)
         let data
         let errorStatus = 0
-        try{
-          data = await fetchByName(request)
-          console.log(111, data)
-          data = filterPlayer(data, request)
-          if(data === "fetcherror" || data === "notfound"){
-            errorStatus = data
-          }else if(request.source==="getplayer"){
-            data = await fetchByIds(data, request.player)
-            if(data === "fetcherror" || data === "notfound") errorStatus = data
+        if(request.source==="groupPredict"){
+          console.log(request)
+          data = await fetchGroupPredictions(request.player, request.apiKey)
+          console.log(data)
+        }else{
+          try{
+            data = await fetchByName(request)
+            console.log(111, data)
+            data = filterPlayer(data, request)
+            if(data === "fetcherror" || data === "notfound"){
+              errorStatus = data
+            }else if(request.source==="getplayer"){
+              data = await fetchByIds(data, request.player)
+              if(data === "fetcherror" || data === "notfound") errorStatus = data
+            }
+          }catch(err){
+            console.error(err)         
+            errorStatus = "fetcherror"
           }
-        }catch(err){
-          console.error(err)         
-          errorStatus = "fetcherror"
         }
-        console.log(errorStatus)
         sendResponse({aliData:data, action: request.source, errorStatus: errorStatus})
-       })()
+      })()
        return true;
   });
+//START FETCH GROUP PREDICTIONS FOR A NEW GROUP//
+async function fetchGroupPredictions(requestIn, apiKey){
+  let fetchedPredictions
+  try {
+    fetchedPredictions = await fetch(`http://aligulac.com/api/v1/predictrrgroup/${requestIn}/?apikey=${apiKey}&bo=3`,
+    {
+            'method':'GET',
+            'headers':{
+                "Access-Control-Allow-Origin":"*",
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token'
 
+            }
+    })
+  } catch (error) {
+    console.error(error)
+    return "fetcherror"
+  }
+  return fetchedPredictions.json()
+}
+//END FETCH GROUP PREDICTIONS FOR A NEW GROUP//
 //START FETCH PLAYER SEARCH BY NAME USING ALIGULAC API//
 async function fetchByName(request){
     let fetchedByName
