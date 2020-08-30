@@ -12,6 +12,14 @@ async function findPlayer(event){
     await fetchPlayerData(playerToFetch, race[0], country, "getplayer")
 }
 function generatePlayerRequest(event){
+    const playerToFetch = whatIsSelected(event.target.innerText) //splices the name of the player out
+    if(playerToFetch===-1){
+        return -1;
+    }
+    if(playerIdsDict[playerToFetch]){//fetches player if player is caches already
+        return {playerToFetch, flagElement:playerIdsDict[playerToFetch].flagElement, race: playerIdsDict[playerToFetch].race, country:playerIdsDict[playerToFetch].country}
+    }
+    console.log(124552145)
     let race = "R"
     try{
         if(event.target.nodeName==="TD"){
@@ -27,7 +35,7 @@ function generatePlayerRequest(event){
                 race = colorMap[event.target.cellIndex]//participants list doesnt have race explicitly stated. Col 1 = P, 2 = T, 3 = Z
                 }
             }    
-        else if(event.target.className.includes("bracket-player-top") || event.target.className.includes("bracket-player.bottom")){
+        else if(event.target.className.includes("bracket-player-top") || event.target.className.includes("bracket-player-bottom")){
             //Brackets are the only event where the element of origin is not a <TD>
             race = colorMap[event.target.attributes.style.value.match(/\d{3}/)]
             //Brackets don't have race icons. Race is captured using distinct bg colors
@@ -39,10 +47,7 @@ function generatePlayerRequest(event){
             return -1
         }
     if(!race) race = "R"    //placeholder for when the race is not listed
-    const playerToFetch = whatIsSelected(event.target.innerText) //splices the name of the player out
-    if(playerToFetch===-1){
-        return -1;
-    }
+  
 
     const flag = event.target.getElementsByClassName("flag")[0] 
     let country = ""

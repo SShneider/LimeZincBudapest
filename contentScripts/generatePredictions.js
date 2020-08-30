@@ -59,7 +59,7 @@ async function initiateGroupPredictions(event, origin, typeOfGroup){
             existingIdsFetch.push(playerIdsDict[current.playerToFetch].id)
         }
         else{
-            playerIdsDict[current.playerToFetch] = {flagElement: current.flagElement, raceElement: raceIconMap[current.race]}
+            playerIdsDict[current.playerToFetch] = {flagElement: current.flagElement, raceElement: raceIconMap[current.race], race:current.race, country:current.country}
             playerRequests.push(current)
             predictPlayersNames.push(current.playerToFetch)
         }
