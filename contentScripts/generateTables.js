@@ -77,3 +77,50 @@ function createElementFromHTML(X, Y, flag, race, player) {
     tableOut.style.top = (Y-100)+"px"
     return tableOut
 }
+
+const rrString1= `<tbody>
+<tr><th colspan="6">Final Standings Probability</th></tr>
+<tr><th style="min-width:21px"></th>
+<th style="min-width:21px"></th>
+<th style="min-width:100px">Player</th>`
+
+const rrString2 = `<th style="min-width:21px">` //Header places. 1 per player in group. Closed by Str 3
+const rrString3 = `</th>` //Close Th Tag
+const rrString4n13= `</tr>` //Close Row Tag
+const rrString5 = `<tr><td style="text-align:center">` //Row Num Col. 1 per player in group. Closed by Str 4
+const rrString6n10n12 = `</td>`//Close Col Tag
+const rrString7 = `<td style="text-align:center"><span class="flag">` //Opens player flag col. Closed by Str 8
+const rrString8=`</span></td><td style="text-align:center">` //Closes Flag, Opens Race col. Closed by Str 9
+const rrString9 = `</td><td>` //Closes Race. Opens Player Name. Closed by Str 6.
+const rrString11 = `<td style="text-align:center">` //Opens Probability Col. N*N matrix. Closed by Str 6. Then Str 4. 
+const rrString14 = `</tbody>` //Closes body. Table is created by document. methods.
+
+function generateRoundRobinTable(tableData){
+    let tableString = [rrString1] //1 used up
+    for(let i = 0; i<tableData.length; i++){
+        tableString.push(rrString2) //2 used up
+        tableString.push(i)
+        tableString.push(rrString3) //3 used up
+    }
+    tableString.push(rrString4n13) // Header Complete
+    for(let i = 0; i<tableData.length; i++){
+        tableString.push(rrString5) //Player # Open
+        tableString.push(i)
+        tableString.push(rrString6n10n12) //Player # Close
+        tableString.push(rrString7)//Flag Open
+        tableString.push(playerIdsDict[tableData[i].player.tag].flagElement)
+        tableString.push(rrString8) //Flag Closed Race open
+        tableString.push(playerIdsDict[tableData[i].player.tag].raceElement)
+        tableString.push(rrString9) //Race Closed Player Name Open
+        tableString.push(tableData[i].player.tag)
+        tableString.push(rrString6n10n12)
+        for(let j = 0; j<tableData[i].probs.length; j++){
+            tableString.push(rrString11) //Opens probability col
+            tableString.push((tableData[i][j]*100).toFixed(2)+'%') 
+            tableString.push(rrString6n10n12) //Closes prob col
+        }
+        tableString.push(rrString4n13)//closes player row
+    }    
+    tableString.push(rrString14)//closes tbody
+    return tableString.join('')
+}

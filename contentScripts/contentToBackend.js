@@ -27,6 +27,14 @@ function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn="getplayer"){
                         processGroupResponse()
                     }
                 }
+        }else if(response.action==="groupPredict"){
+            if(response.errorStatus==="notfound"){
+                console.error("notfound")
+            }else if(response.errorStatus){
+                console.error("fetcherror")
+            }else{
+                generateRoundRobinTable(request.table)
+            }
         }
     }else{
         errorMessage()

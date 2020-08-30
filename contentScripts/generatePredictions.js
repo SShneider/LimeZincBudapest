@@ -52,6 +52,9 @@ async function initiateGroupPredictions(event, origin, typeOfGroup){
         //current = {playerToFetch, flagElement, race, country}
         let current = generatePlayerRequest({target:playersArray[i]}, 0)
         if(playerIdsDict[current.playerToFetch]) continue
+        else{
+            playerIdsDict[current.playerToFetch] = {flagElement: current.flagElement, raceElement: raceIconMap[current.race]}
+        }
         playerRequests.push(current)
         predictPlayersNames.push(current.playerToFetch)
     }
@@ -63,12 +66,13 @@ async function initiateGroupPredictions(event, origin, typeOfGroup){
 
 function processGroupResponse(){
     groupArray.forEach(player =>{
-        playerIdsDict[player.tag] = player.id
+        playerIdsDict[player.tag].id = player.id
     })
     const playersToPredict = []
     predictPlayersNames.forEach(name=>{
-        playersToPredict.push(playerIdsDict[name])
+        playersToPredict.push(playerIdsDict[name].id)
     })
     // fetchPlayerData args == (playerIn, raceIn, countryIn, sourceIn)
+    console.log(playerIdsDict)
     fetchPlayerData(playersToPredict.join(), 0, 0, "groupPredict")
 }
