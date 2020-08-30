@@ -1,5 +1,5 @@
 
-function createElementFromHTML(X, Y, flag, race, player) {
+function generatePlayerTable(X, Y, flag, race, player) {
     let htmlString = 
     `<tbody>
         <tr>
@@ -66,10 +66,19 @@ function createElementFromHTML(X, Y, flag, race, player) {
         </tbody>
         `
   
-    removeGeneratedTable()
+    removeGeneratedTable(0, "generatedPlayerTable")
+    return generateTableWrapper(X, Y, htmlString, "generatedPlayerTable")
+}
+//make table preview show only final Standings TH 
+//and Mean Score TH
+//and the right side would be a progress bar
+//make single player predict cache user 
+
+function generateTableWrapper(X, Y, htmlString, typeOfTable){
     let  tableOut = document.createElement('table');
-    tableOut.classList.add("matchlist", "wikitable", "aliTable")
-    tableOut.setAttribute('id', 'generatedTable')
+    if(typeOfTable==="generatedPlayerTable") tableOut.classList.add("matchlist", "wikitable", "aliTable")
+    else if(typeOfTable==="rrTable") tableOut.classList.add("wikitable", "wikitable-striped", "wikitable-bordered",  "aliTable")
+    tableOut.setAttribute('id', typeOfTable)
     tableOut.innerHTML = htmlString.trim();
     tableOut.style.position = "absolute"
     tableOut.style.zIndex = "999"
@@ -77,10 +86,10 @@ function createElementFromHTML(X, Y, flag, race, player) {
     tableOut.style.top = (Y-100)+"px"
     return tableOut
 }
-
 const rrString1= `<tbody>
 <tr><th colspan="6">Final Standings Probability</th></tr>
 <tr><th style="min-width:21px"></th>
+<th style="min-width:21px"></th>
 <th style="min-width:21px"></th>
 <th style="min-width:100px">Player</th>`
 
@@ -99,13 +108,13 @@ function generateRoundRobinTable(tableData){
     let tableString = [rrString1] //1 used up
     for(let i = 0; i<tableData.length; i++){
         tableString.push(rrString2) //2 used up
-        tableString.push(i)
+        tableString.push(i+1)
         tableString.push(rrString3) //3 used up
     }
     tableString.push(rrString4n13) // Header Complete
     for(let i = 0; i<tableData.length; i++){
         tableString.push(rrString5) //Player # Open
-        tableString.push(i)
+        tableString.push(i+1)
         tableString.push(rrString6n10n12) //Player # Close
         tableString.push(rrString7)//Flag Open
         tableString.push(playerIdsDict[tableData[i].player.tag].flagElement)
@@ -116,11 +125,23 @@ function generateRoundRobinTable(tableData){
         tableString.push(rrString6n10n12)
         for(let j = 0; j<tableData[i].probs.length; j++){
             tableString.push(rrString11) //Opens probability col
-            tableString.push((tableData[i][j]*100).toFixed(2)+'%') 
+            if(i===j)tableString.push("<b>")
+            tableString.push((tableData[i].probs[j]*100).toFixed(2)+'%') 
+            if(i===j)tableString.push("</b>")
             tableString.push(rrString6n10n12) //Closes prob col
         }
         tableString.push(rrString4n13)//closes player row
     }    
     tableString.push(rrString14)//closes tbody
-    return tableString.join('')
+    workArea.append(generateTableWrapper(XforPredictionTable, YforPredictionTable, tableString.join(''), "rrTable"))
+}
+
+function removeGeneratedTable(event, typeOfTable){
+    if(event){
+        for(let i = 0; i<event.path.length; i++){
+            if(event.path[i].id && event.path[i].id === typeOfTable) return
+        }
+    }
+    const genTable =  document.getElementById(typeOfTable)
+    if (genTable) genTable.remove()
 }

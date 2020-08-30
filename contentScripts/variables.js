@@ -20,4 +20,7 @@ let groupArray = [] //returns an array of player ids from aligulac
 let playerRequests = [] //array of players listed on liquipedia, processed for backend requests
 let playerIdsDict = {} //list of aligulac playerIds already fetched Name:Id
 let predictPlayersNames = [] //list of players in current prediction array, independent of whether they're already in dictionary.
+let existingIdsFetch = [] //for when you dont need to fetch ids, only predictions
+let XforPredictionTable
+let YforPredictionTable
 //END GENERATE PREDICTIONS VARIABLES//

@@ -1,13 +1,13 @@
 const contentArea = document.getElementById("main-content-column")
 const closeTableArea = document.getElementsByTagName("body")[0]
 contentArea.addEventListener("dblclick",  ()   =>  findPlayer(event))
-closeTableArea.addEventListener("click", () => removeGeneratedTable(event))
+closeTableArea.addEventListener("click", () => removeGeneratedTable(event, "generatedPlayerTable"))
 
 async function findPlayer(event){
     if(event.target.innerText.indexOf("Group ")!==-1) return //blocks the function from executing when clicked on group title. 
     const generatedRequest = generatePlayerRequest(event)
     const {playerToFetch, flagElement, race, country} = generatedRequest
-    const playerTable=createElementFromHTML(event.pageX, event.pageY, flagElement, raceIconMap[race], playerToFetch)
+    const playerTable=generatePlayerTable(event.pageX, event.pageY, flagElement, raceIconMap[race], playerToFetch)
     contentArea.append(playerTable)
     await fetchPlayerData(playerToFetch, race[0], country, "getplayer")
 }
@@ -120,13 +120,4 @@ function displayPlayerInfo(playerData, i){
 
 
 
-function removeGeneratedTable(event){
-    if(event){
-        for(let i = 0; i<event.path.length; i++){
-            if(event.path[i].id && event.path[i].id ==="generatedTable") return
-        }
-    }
-    //if(event && event.path.indexOf("table#generatedTable.matchlist.wikitable.aliTable")!==-1) return
-    const genTable =  document.getElementById("generatedTable")
-    if (genTable) genTable.remove()
-}
+

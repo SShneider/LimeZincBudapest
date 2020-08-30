@@ -33,7 +33,8 @@ function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn="getplayer"){
             }else if(response.errorStatus){
                 console.error("fetcherror")
             }else{
-                generateRoundRobinTable(request.table)
+                //console.log(response.table)
+                generateRoundRobinTable(response.aliData.table)
             }
         }
     }else{
