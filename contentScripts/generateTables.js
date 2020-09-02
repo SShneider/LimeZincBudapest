@@ -91,11 +91,13 @@ const rrString1= `<tbody>
 <tr><th style="min-width:21px"></th>
 <th style="min-width:21px"></th>
 <th style="min-width:21px"></th>
-<th style="min-width:100px">Player</th>`
+<th style="min-width:100px">Player</th>
+<th style="min-width:21px">Matches</th>
+<th style="min-width:21px">Games</th>`
 
 const rrString2 = `<th style="min-width:21px">` //Header places. 1 per player in group. Closed by Str 3
 const rrString3 = `</th>` //Close Th Tag
-const rrString4= `<th style="min-width:21px">Matches</th><th style="min-width:21px">Games</th></tr>` //Closes Col Names Row
+const rrString4= `</tr>` //Closes Col Names Row
 const rrString5 = `<tr><td style="text-align:center">` //Row Num Col. 1 per player in group. Closed by Str 4
 const rrString6n10n12 = `</td>`//Close Col Tag
 const rrString7 = `<td style="text-align:center"><span class="flag">` //Opens player flag col. Closed by Str 8
@@ -132,6 +134,12 @@ function generateRoundRobinTable(aliData){
         tableString.push(tableData[i].player.tag)//"<b class='popuptrig'>"++"</b>")
         tableString.push(generateMatchListHoverTable(tableData[i].player.tag.toLowerCase(), aliData))
         tableString.push(rrString6n10n12)
+        tableString.push(rrString11) //Opens match col
+        tableString.push("<b>"+Math.round(winrate[i].exp_match_wins)+"-"+Math.round(winrate[i].exp_match_losses)+"</b>")
+        tableString.push(rrString6n10n12) //Closes match col
+        tableString.push(rrString11) //Opens game col
+        tableString.push("<b>"+Math.round(winrate[i].exp_set_wins)+"-"+Math.round(winrate[i].exp_set_losses)+"</b>")
+        tableString.push(rrString6n10n12) //Closes game col
         let maxProbability = (Math.max(...tableData[i].probs)*100).toFixed(2)
         console.log(maxProbability)
         for(let j = 0; j<tableData[i].probs.length; j++){
@@ -142,13 +150,6 @@ function generateRoundRobinTable(aliData){
             if(currentProbability===maxProbability)tableString.push("</b>")
             tableString.push(rrString6n10n12) //Closes prob col
         }
-
-        tableString.push(rrString11) //Opens match col
-        tableString.push("<b>"+Math.round(winrate[i].exp_match_wins)+"-"+Math.round(winrate[i].exp_match_losses)+"</b>")
-        tableString.push(rrString6n10n12) //Closes match col
-        tableString.push(rrString11) //Opens game col
-        tableString.push("<b>"+Math.round(winrate[i].exp_set_wins)+"-"+Math.round(winrate[i].exp_set_losses)+"</b>")
-        tableString.push(rrString6n10n12) //Closes game col
         tableString.push(rrString13)//closes player row
     }    
     tableString.push(rrString14)//closes tbody
