@@ -108,7 +108,6 @@ const rrString14 = `</tbody>` //Closes body. Table is created by document. metho
 function generateRoundRobinTable(aliData){
     const tableData = aliData.table
     const winrate = aliData.mtable
-    const individualMatches = aliData.meanres
     let tableString = [rrString1] //1 used up
     for(let i = 0; i<tableData.length; i++){
         tableString.push(rrString2) //2 used up
@@ -126,7 +125,7 @@ function generateRoundRobinTable(aliData){
         tableString.push(playerIdsDict[tableData[i].player.tag].raceElement)
         tableString.push(rrString9) //Race Closed Player Name Open
         tableString.push(tableData[i].player.tag)//"<b class='popuptrig'>"++"</b>")
-        tableString.push(generateMatchListHoverTable(tableData[i].player.tag.toLowerCase(), individualMatches))
+        tableString.push(generateMatchListHoverTable(tableData[i].player.tag.toLowerCase(), aliData))
         tableString.push(rrString6n10n12)
         for(let j = 0; j<tableData[i].probs.length; j++){
             tableString.push(rrString11) //Opens probability col
@@ -148,25 +147,41 @@ function generateRoundRobinTable(aliData){
     workArea.append(generateTableWrapper(XforPredictionTable, YforPredictionTable, tableString.join(''), "rrTable"))
 }
 
-function generateMatchListHoverTable(currentPlayer, individualMatches){
-    //needed: individualMatches -> pla || plb -> .tag, .score I.E.: individualMatches.plb.tag
-    const hoverString = ["<table class = 'popup shadow'><tbody><tr><th colspan='12'>Expected Scores</th></tr>"];//
+function generateMatchListHoverTable(currentPlayer, aliData){
+    const predictedMatches = aliData.meanres
+    const completedMatches = aliData.matches
+    let matchesToProcess
+    //needed: predictedMatches -> pla || plb -> .tag, .score I.E.: predictedMatches.plb.tag
+    let hoverString = ["<table class = 'popup shadow'><tbody>"]
+    let stringToPush
+    const hoverStringPredicted = ["<tr><th colspan='12'>Expected Scores</th></tr>"]
+    const hoverStringCompleted = ["<tr><th colspan='12'>Completed</th></tr>"]
     const tdOpen = `<td class="popupscore"><b>`
-    for(let i = 0; i<individualMatches.length; i++){
+    for(let i = 0; i<completedMatches.length; i++){
+        if(completedMatches[i].pla.score+completedMatches[i].plb.score) {
+            matchesToProcess = completedMatches
+            stringToPush = hoverStringCompleted
+        }
+        else{
+            matchesToProcess = predictedMatches
+            stringToPush = hoverStringPredicted
+        } 
         let thisPlayer = 0
         let opponent = 0
-        if(individualMatches[i].pla.tag.toLowerCase()===currentPlayer){
+        if(matchesToProcess[i].pla.tag.toLowerCase()===currentPlayer){
             thisPlayer = "pla"
             opponent = "plb"
         }
-        else if(individualMatches[i].plb.tag.toLowerCase()===currentPlayer){
+        else if(matchesToProcess[i].plb.tag.toLowerCase()===currentPlayer){
             thisPlayer = "plb"
             opponent = "pla"
         }
         if(!thisPlayer) continue
-        hoverString.push("<tr>"+tdOpen+individualMatches[i][thisPlayer].score+"</b></td>"+tdOpen
-        +individualMatches[i][opponent].score+"</b></td><td class='hoverOpp'>"+individualMatches[i][opponent].tag+"</td></tr>")
+        stringToPush.push("<tr>"+tdOpen+matchesToProcess[i][thisPlayer].score+"</b></td>"+tdOpen
+        +matchesToProcess[i][opponent].score+"</b></td><td class='hoverOpp'>"+matchesToProcess[i][opponent].tag+"</td></tr>")
     }
+    if(hoverStringCompleted.length>1) hoverString.push(hoverStringCompleted.join(''))
+    if(hoverStringPredicted.length>1) hoverString.push(hoverStringPredicted.join(''))
     return hoverString.join('')+"</tbody></table>"
 }
 

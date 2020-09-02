@@ -34,7 +34,6 @@ function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn = "getplayer") {
                     } else if (response.errorStatus) {
                         console.error("fetcherror")
                     } else {
-                        console.log(response.aliData)
                         groupPredictionDict[currentId] = response.aliData
                         generateRoundRobinTable(response.aliData)
                     }
