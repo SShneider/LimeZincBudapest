@@ -24,30 +24,48 @@ function generateGroupListeners(){
     for(let i = 0; i<groupElements.length; i++){
         let typeOfGroup = "swiss"
         let totalplayers = groupElements[i].getElementsByClassName("grouptableslot")
-        let totalmatches = groupMatchesElements[i].getElementsByClassName("matchlistslot")
-        if(totalplayers.length===4 && totalmatches.length===10) typeOfGroup = "gslFormat"
-        groupElements[i].getElementsByTagName("span")[0].addEventListener("dblclick", ()=>initiateGroupPredictions(event, groupElements[i], typeOfGroup))
+        let totalmatches = groupMatchesElements[i].getElementsByClassName("match-row")
+        if(totalplayers.length===4 && totalmatches.length===5) typeOfGroup = "gslFormat"
+        groupElements[i].getElementsByTagName("span")[0].addEventListener("dblclick", ()=>initiateGroupPredictions(event, groupElements[i], totalmatches, typeOfGroup))
     }
 }
 
-async function initiateGroupPredictions(event, origin, typeOfGroup){
+async function initiateGroupPredictions(event, origin, matchList, typeOfGroup){
     if(event.target.dataset && event.target.dataset.groupid){//if group predictions are cached, fetch them
         if(groupPredictionDict[event.target.dataset.groupid]){
             generateRoundRobinTable(groupPredictionDict[event.target.dataset.groupid])
             return 
         }
     }
-    generateGroupRule(origin)
-    currentId = count+"aliPredict"
-    event.target.dataset.groupid = currentId //adds an id to the event target. it can be used to recall cached data
-    count++
+
+    completedMatchesDict = {}
     XforPredictionTable = event.pageX
     YforPredictionTable = event.pageY
     groupArray = []
     predictPlayersNames = []
     playerRequests = []
     existingIdsFetch = []
-  
+    //reset global vars
+
+    console.log(matchList)
+    BoX = generateGroupRule(origin)
+    for(let i = 0; i<matchList.length; i++){
+        let tdList = matchList[i].getElementsByTagName("td")
+        let matchId = tdList[0].dataset.highlightingkey.toLowerCase()+tdList[3].dataset.highlightingkey.toLowerCase()
+        if(parseInt(tdList[1].innerText+tdList[2].innerText)){
+            completedMatchesDict[matchId] = {}
+            completedMatchesDict[matchId][tdList[0].dataset.highlightingkey.toLowerCase()] = tdList[1].innerText
+            completedMatchesDict[matchId][tdList[3].dataset.highlightingkey.toLowerCase()] = tdList[2].innerText
+        }
+    }
+
+
+    currentId = count+"aliPredict"
+    event.target.dataset.groupid = currentId 
+    count++
+    //adds an id to the event target. it can be used to recall cached data 
+
+
     const playersArray = [...origin.getElementsByClassName("grouptableslot")].filter(x=>x.parentNode.dataset.toggleAreaContent==="1")
     //liquipedia has multiple instances of every player, 1 for each "game day". 
     for(let i = 0; i<playersArray.length; i++){
@@ -62,6 +80,7 @@ async function initiateGroupPredictions(event, origin, typeOfGroup){
             predictPlayersNames.push(current.playerToFetch)
         }
     }
+    
     if(playerRequests.length){ 
         playerRequests.forEach(request =>{
             const {playerToFetch, race, country} = request
@@ -99,5 +118,5 @@ function generateGroupRule(origin){
     console.log(ruleString)
     const theRule = nodeIterator.innerText.split("\n")[0]
     BoX = ruleString.substring(ruleString.indexOf(theRule)+theRule.length).match(/Bo\d/)[0][2]
-    console.log(BoX)
+    return BoX
 }
