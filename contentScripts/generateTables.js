@@ -76,8 +76,8 @@ function generatePlayerTable(X, Y, flag, race, player) {
 
 function generateTableWrapper(X, Y, htmlString, typeOfTable){
     let  tableOut = document.createElement('table');
-    if(typeOfTable==="generatedPlayerTable") tableOut.classList.add("matchlist", "wikitable", "aliTable")
-    else if(typeOfTable==="rrTable") tableOut.classList.add("wikitable", "wikitable-striped", "wikitable-bordered",  "aliTable")
+    if(typeOfTable==="generatedPlayerTable") tableOut.classList.add("matchlist", "wikitable", "aliTable", "shadow")
+    else if(typeOfTable==="rrTable") tableOut.classList.add("shadow","wikitable", "wikitable-striped", "wikitable-bordered",  "aliTable")
     tableOut.setAttribute('id', typeOfTable)
     tableOut.innerHTML = htmlString.trim();
     tableOut.style.position = "absolute"
@@ -150,7 +150,7 @@ function generateRoundRobinTable(aliData){
 
 function generateMatchListHoverTable(currentPlayer, individualMatches){
     //needed: individualMatches -> pla || plb -> .tag, .score I.E.: individualMatches.plb.tag
-    const hoverString = ["<table class = 'popup'>"];//
+    const hoverString = ["<table class = 'popup shadow'><tbody><tr><th colspan='12'>Expected Scores</th></tr>"];//
     const tdOpen = `<td class="popupscore"><b>`
     for(let i = 0; i<individualMatches.length; i++){
         let thisPlayer = 0
@@ -165,9 +165,9 @@ function generateMatchListHoverTable(currentPlayer, individualMatches){
         }
         if(!thisPlayer) continue
         hoverString.push("<tr>"+tdOpen+individualMatches[i][thisPlayer].score+"</b></td>"+tdOpen
-        +individualMatches[i][opponent].score+"</b></td><td>"+individualMatches[i][opponent].tag+"</td></tr>")
+        +individualMatches[i][opponent].score+"</b></td><td class='hoverOpp'>"+individualMatches[i][opponent].tag+"</td></tr>")
     }
-    return hoverString.join('')+"</table>"
+    return hoverString.join('')+"</tbody></table>"
 }
 
 function removeGeneratedTable(event, typeOfTable){
