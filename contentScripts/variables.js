@@ -12,7 +12,7 @@ let apiKey = 'X8HsOXXCVDayh3vRn75E'
 //start aligulac strings//
 const bestofN = "predictmatch"//exactly 2 players 
 const gslFormat = "predictdual"//exactly 4 players
-const singleEleim = "predictsebracket"//number of players that is a power of 2
+const singleElim = "predictsebracket"//number of players that is a power of 2
 const swiss = "predictrrgroup"
 //end aligulac strings//
 const singleMatchDict ={format: bestofN, bo: 1} //default dict
@@ -25,4 +25,6 @@ let predictPlayersNames = [] //list of players in current prediction array, inde
 let existingIdsFetch = [] //for when you dont need to fetch ids, only predictions
 let XforPredictionTable
 let YforPredictionTable
+let currentId//group id for storing backend fetch
+let count = 0// generates class for match predictions
 //END GENERATE PREDICTIONS VARIABLES//

@@ -26,32 +26,27 @@ function generateGroupListeners(){
         let totalplayers = groupElements[i].getElementsByClassName("grouptableslot")
         let totalmatches = groupMatchesElements[i].getElementsByClassName("matchlistslot")
         if(totalplayers.length===4 && totalmatches.length===10) typeOfGroup = "gslFormat"
-        groupElements[i].getElementsByTagName("tbody")[0].childNodes[0].addEventListener("dblclick", ()=>initiateGroupPredictions(event, groupElements[i], typeOfGroup))
+        groupElements[i].getElementsByTagName("span")[0].addEventListener("dblclick", ()=>initiateGroupPredictions(event, groupElements[i], typeOfGroup))
     }
 }
 
 async function initiateGroupPredictions(event, origin, typeOfGroup){
+    if(event.target.dataset && event.target.dataset.groupid){//if group predictions are cached, fetch them
+        generateRoundRobinTable(rrPredictionDict[event.target.dataset.groupid])
+        return 
+    }
+    currentId = count+"aliPredict"
+    event.target.dataset.groupid = currentId //adds an id to the event target. it can be used to recall cached data
+    count++
     XforPredictionTable = event.pageX
     YforPredictionTable = event.pageY
     groupArray = []
     predictPlayersNames = []
     playerRequests = []
     existingIdsFetch = []
-    let BoX = 0
-    let nodeIterator = origin.parentNode
-    while (nodeIterator){
-        if(nodeIterator.classList.contains("toggle-group")) break
-        nodeIterator=nodeIterator.parentNode
-    }
-    nodeIterator = nodeIterator.previousSibling
-    while(nodeIterator){
-        if(nodeIterator.tagName==="H3") break;
-        nodeIterator = nodeIterator.previousSibling
-    }
-    const theRule = nodeIterator.innerText.split("\n")[0]
-    BoX = ruleString.substring(ruleString.indexOf(theRule)+theRule.length).match(/Bo\d/)[0][2]
+  
     const playersArray = [...origin.getElementsByClassName("grouptableslot")].filter(x=>x.parentNode.dataset.toggleAreaContent==="1")
-    
+    //liquipedia has multiple instances of every player, 1 for each "game day". 
     for(let i = 0; i<playersArray.length; i++){
         //current = {playerToFetch, flagElement, race, country}
         let current = generatePlayerRequest({target:playersArray[i]}, 0)
@@ -84,4 +79,20 @@ function processGroupResponse(){
     })
     // fetchPlayerData args == (playerIn, raceIn, countryIn, sourceIn)
     fetchPlayerData(playersToPredict.join(), 0, 0, "groupPredict")
+}
+
+function generateGroupRule(){
+    let BoX = 0
+    let nodeIterator = origin.parentNode
+    while (nodeIterator){
+        if(nodeIterator.classList.contains("toggle-group")) break
+        nodeIterator=nodeIterator.parentNode
+    }
+    nodeIterator = nodeIterator.previousSibling
+    while(nodeIterator){
+        if(nodeIterator.tagName==="H3") break;
+        nodeIterator = nodeIterator.previousSibling
+    }
+    const theRule = nodeIterator.innerText.split("\n")[0]
+    BoX = ruleString.substring(ruleString.indexOf(theRule)+theRule.length).match(/Bo\d/)[0][2]
 }

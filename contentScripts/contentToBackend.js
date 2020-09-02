@@ -1,5 +1,5 @@
 function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn="getplayer"){
-    if(playerStatsDict[playerIn]){
+    if(playerStatsDict[playerIn] && sourceIn==="getplayer"){
         processAliDataForPlayerStats(playerStatsDict[playerIn])
     }
     else{
@@ -33,6 +33,7 @@ function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn="getplayer"){
                     console.error("fetcherror")
                 }else{
                     //console.log(response.table)
+                    rrPredictionDict[currentId] = response.aliData.table
                     generateRoundRobinTable(response.aliData.table)
                 }
             }
