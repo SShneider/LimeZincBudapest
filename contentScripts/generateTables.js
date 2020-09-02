@@ -106,7 +106,12 @@ const rrString13 = `</tr>`  //Close Tr Tag
 const rrString14 = `</tbody>` //Closes body. Table is created by document. methods.
 
 function generateRoundRobinTable(aliData){
-    const tableData = aliData.table
+    const tableData = []
+    for(let i = 0; i<aliData.mtable.length; i++){ //unified sorting order between winrates and placement probability
+        for(let j = 0; j<aliData.table.length; j++){
+            if(aliData.mtable[i].player.id === aliData.table[j].player.id) tableData.push(aliData.table[j])
+        }
+    }
     const winrate = aliData.mtable
     let tableString = [rrString1] //1 used up
     for(let i = 0; i<tableData.length; i++){
@@ -127,11 +132,14 @@ function generateRoundRobinTable(aliData){
         tableString.push(tableData[i].player.tag)//"<b class='popuptrig'>"++"</b>")
         tableString.push(generateMatchListHoverTable(tableData[i].player.tag.toLowerCase(), aliData))
         tableString.push(rrString6n10n12)
+        let maxProbability = (Math.max(...tableData[i].probs)*100).toFixed(2)
+        console.log(maxProbability)
         for(let j = 0; j<tableData[i].probs.length; j++){
+            let currentProbability = (tableData[i].probs[j]*100).toFixed(2)
             tableString.push(rrString11) //Opens probability col
-            if(i===j)tableString.push("<b>")
-            tableString.push((tableData[i].probs[j]*100).toFixed(2)+'%') 
-            if(i===j)tableString.push("</b>")
+            if(currentProbability===maxProbability)tableString.push("<b>")
+            tableString.push(currentProbability+'%') 
+            if(currentProbability===maxProbability)tableString.push("</b>")
             tableString.push(rrString6n10n12) //Closes prob col
         }
 
@@ -158,7 +166,7 @@ function generateMatchListHoverTable(currentPlayer, aliData){
     const hoverStringCompleted = ["<tr><th colspan='12'>Completed</th></tr>"]
     const tdOpen = `<td class="popupscore"><b>`
     for(let i = 0; i<completedMatches.length; i++){
-        if(completedMatches[i].pla.score+completedMatches[i].plb.score) {
+        if(completedMatches[i].pla.score===Math.floor(BoX/2)+1 || completedMatches[i].plb.score===Math.floor(BoX/2)+1) {
             matchesToProcess = completedMatches
             stringToPush = hoverStringCompleted
         }
