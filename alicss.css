@@ -1,7 +1,27 @@
 .gen{
   font-weight: bold;
 }
+.popuptrig {
+  position: relative;
+}
 
+.popuptrig .popup {
+  visibility: hidden;
+  border: 1px solid black!important;
+  border-right: 1px solid black!important;
+  border-left: 1px solid black!important;
+  /* Position the popuptrig */
+  position: absolute;
+  z-index: 1;
+}
+.popupscore{
+  min-width: 27px;
+  text-align: center;
+}
+
+.popuptrig:hover .popup {
+  visibility: visible;
+}
 .loader {
 
     width: 1em;

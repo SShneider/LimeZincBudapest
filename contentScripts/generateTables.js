@@ -100,7 +100,7 @@ const rrString5 = `<tr><td style="text-align:center">` //Row Num Col. 1 per play
 const rrString6n10n12 = `</td>`//Close Col Tag
 const rrString7 = `<td style="text-align:center"><span class="flag">` //Opens player flag col. Closed by Str 8
 const rrString8=`</span></td><td style="text-align:center">` //Closes Flag, Opens Race col. Closed by Str 9
-const rrString9 = `</td><td>` //Closes Race. Opens Player Name. Closed by Str 6.
+const rrString9 = `</td><td class='popuptrig'>` //Closes Race. Opens Player Name. Closed by Str 6.
 const rrString11 = `<td style="text-align:center">` //Opens Probability Col. N*N matrix. Closed by Str 6. Then Str 4. 
 const rrString13 = `</tr>`  //Close Tr Tag
 const rrString14 = `</tbody>` //Closes body. Table is created by document. methods.
@@ -125,7 +125,8 @@ function generateRoundRobinTable(aliData){
         tableString.push(rrString8) //Flag Closed Race open
         tableString.push(playerIdsDict[tableData[i].player.tag].raceElement)
         tableString.push(rrString9) //Race Closed Player Name Open
-        tableString.push(tableData[i].player.tag)
+        tableString.push(tableData[i].player.tag)//"<b class='popuptrig'>"++"</b>")
+        tableString.push(generateMatchListHoverTable(tableData[i].player.tag.toLowerCase(), individualMatches))
         tableString.push(rrString6n10n12)
         for(let j = 0; j<tableData[i].probs.length; j++){
             tableString.push(rrString11) //Opens probability col
@@ -146,9 +147,27 @@ function generateRoundRobinTable(aliData){
     tableString.push(rrString14)//closes tbody
     workArea.append(generateTableWrapper(XforPredictionTable, YforPredictionTable, tableString.join(''), "rrTable"))
 }
-function generateMatchListHoverTable(currentPlayer, meanres){
-    //needed: meanres.tag, meanres.score
-    
+
+function generateMatchListHoverTable(currentPlayer, individualMatches){
+    //needed: individualMatches -> pla || plb -> .tag, .score I.E.: individualMatches.plb.tag
+    const hoverString = ["<table class = 'popup'>"];//
+    const tdOpen = `<td class="popupscore"><b>`
+    for(let i = 0; i<individualMatches.length; i++){
+        let thisPlayer = 0
+        let opponent = 0
+        if(individualMatches[i].pla.tag.toLowerCase()===currentPlayer){
+            thisPlayer = "pla"
+            opponent = "plb"
+        }
+        else if(individualMatches[i].plb.tag.toLowerCase()===currentPlayer){
+            thisPlayer = "plb"
+            opponent = "pla"
+        }
+        if(!thisPlayer) continue
+        hoverString.push("<tr>"+tdOpen+individualMatches[i][thisPlayer].score+"</b></td>"+tdOpen
+        +individualMatches[i][opponent].score+"</b></td><td>"+individualMatches[i][opponent].tag+"</td></tr>")
+    }
+    return hoverString.join('')+"</table>"
 }
 
 function removeGeneratedTable(event, typeOfTable){
