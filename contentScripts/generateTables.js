@@ -95,23 +95,27 @@ const rrString1= `<tbody>
 
 const rrString2 = `<th style="min-width:21px">` //Header places. 1 per player in group. Closed by Str 3
 const rrString3 = `</th>` //Close Th Tag
-const rrString4n13= `</tr>` //Close Row Tag
+const rrString4= `<th style="min-width:21px">Matches</th><th style="min-width:21px">Games</th></tr>` //Closes Col Names Row
 const rrString5 = `<tr><td style="text-align:center">` //Row Num Col. 1 per player in group. Closed by Str 4
 const rrString6n10n12 = `</td>`//Close Col Tag
 const rrString7 = `<td style="text-align:center"><span class="flag">` //Opens player flag col. Closed by Str 8
 const rrString8=`</span></td><td style="text-align:center">` //Closes Flag, Opens Race col. Closed by Str 9
 const rrString9 = `</td><td>` //Closes Race. Opens Player Name. Closed by Str 6.
 const rrString11 = `<td style="text-align:center">` //Opens Probability Col. N*N matrix. Closed by Str 6. Then Str 4. 
+const rrString13 = `</tr>`  //Close Tr Tag
 const rrString14 = `</tbody>` //Closes body. Table is created by document. methods.
 
-function generateRoundRobinTable(tableData){
+function generateRoundRobinTable(aliData){
+    const tableData = aliData.table
+    const winrate = aliData.mtable
+    const individualMatches = aliData.meanres
     let tableString = [rrString1] //1 used up
     for(let i = 0; i<tableData.length; i++){
         tableString.push(rrString2) //2 used up
         tableString.push(i+1)
         tableString.push(rrString3) //3 used up
     }
-    tableString.push(rrString4n13) // Header Complete
+    tableString.push(rrString4) // Header Complete
     for(let i = 0; i<tableData.length; i++){
         tableString.push(rrString5) //Player # Open
         tableString.push(i+1)
@@ -130,10 +134,21 @@ function generateRoundRobinTable(tableData){
             if(i===j)tableString.push("</b>")
             tableString.push(rrString6n10n12) //Closes prob col
         }
-        tableString.push(rrString4n13)//closes player row
+
+        tableString.push(rrString11) //Opens match col
+        tableString.push("<b>"+Math.round(winrate[i].exp_match_wins)+"-"+Math.round(winrate[i].exp_match_losses)+"</b>")
+        tableString.push(rrString6n10n12) //Closes match col
+        tableString.push(rrString11) //Opens game col
+        tableString.push("<b>"+Math.round(winrate[i].exp_set_wins)+"-"+Math.round(winrate[i].exp_set_losses)+"</b>")
+        tableString.push(rrString6n10n12) //Closes game col
+        tableString.push(rrString13)//closes player row
     }    
     tableString.push(rrString14)//closes tbody
     workArea.append(generateTableWrapper(XforPredictionTable, YforPredictionTable, tableString.join(''), "rrTable"))
+}
+function generateMatchListHoverTable(currentPlayer, meanres){
+    //needed: meanres.tag, meanres.score
+    
 }
 
 function removeGeneratedTable(event, typeOfTable){

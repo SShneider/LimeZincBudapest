@@ -32,9 +32,12 @@ function generateGroupListeners(){
 
 async function initiateGroupPredictions(event, origin, typeOfGroup){
     if(event.target.dataset && event.target.dataset.groupid){//if group predictions are cached, fetch them
-        generateRoundRobinTable(rrPredictionDict[event.target.dataset.groupid])
-        return 
+        if(groupPredictionDict[event.target.dataset.groupid]){
+            generateRoundRobinTable(groupPredictionDict[event.target.dataset.groupid])
+            return 
+        }
     }
+    generateGroupRule(origin)
     currentId = count+"aliPredict"
     event.target.dataset.groupid = currentId //adds an id to the event target. it can be used to recall cached data
     count++
@@ -81,8 +84,8 @@ function processGroupResponse(){
     fetchPlayerData(playersToPredict.join(), 0, 0, "groupPredict")
 }
 
-function generateGroupRule(){
-    let BoX = 0
+function generateGroupRule(origin){
+    let BoX = 3
     let nodeIterator = origin.parentNode
     while (nodeIterator){
         if(nodeIterator.classList.contains("toggle-group")) break
@@ -93,6 +96,8 @@ function generateGroupRule(){
         if(nodeIterator.tagName==="H3") break;
         nodeIterator = nodeIterator.previousSibling
     }
+    console.log(ruleString)
     const theRule = nodeIterator.innerText.split("\n")[0]
     BoX = ruleString.substring(ruleString.indexOf(theRule)+theRule.length).match(/Bo\d/)[0][2]
+    console.log(BoX)
 }

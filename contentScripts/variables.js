@@ -17,7 +17,7 @@ const swiss = "predictrrgroup"
 //end aligulac strings//
 const singleMatchDict ={format: bestofN, bo: 1} //default dict
 const playerStatsDict = {}
-const rrPredictionDict = {}
+const groupPredictionDict = {}
 let groupArray = [] //returns an array of player ids from aligulac
 let playerRequests = [] //array of players listed on liquipedia, processed for backend requests
 let playerIdsDict = {} //list of aligulac playerIds already fetched Name:{id, flagElement, raceElement, race, country}
