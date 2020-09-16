@@ -1,6 +1,7 @@
 const workArea = document.getElementsByClassName("mw-parser-output")[0]
 closeTableArea.addEventListener("click", () => removeGeneratedTable(event, "rrTable"))
 const isTeamLeague = [...document.getElementsByClassName("infobox-cell-2")].filter(x => x.innerText.indexOf("Team League")!==-1).length
+const tablePlaceholderString = `<tbody><tr><th colspan="6">Final Standings Probability<div class="progressBar"><div class="bar"></div></div></th></tr></tbody>`
 generateListeners()
 let ruleString
 processRules()
@@ -37,7 +38,7 @@ async function initiateGroupPredictions(event, origin, matchList, typeOfGroup){
             return 
         }
     }
-
+    
     completedMatchesDict = {}
     XforPredictionTable = event.pageX
     YforPredictionTable = event.pageY
@@ -46,7 +47,7 @@ async function initiateGroupPredictions(event, origin, matchList, typeOfGroup){
     playerRequests = []
     existingIdsFetch = []
     //reset global vars
-
+    workArea.append(generateTableWrapper(event.pageX, event.pageY, tablePlaceholderString, "rrTable"));
     console.log(matchList)
     BoX = generateGroupRule(origin)
     for(let i = 0; i<matchList.length; i++){

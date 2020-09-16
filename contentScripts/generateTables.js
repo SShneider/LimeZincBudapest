@@ -153,7 +153,9 @@ function generateRoundRobinTable(aliData){
         tableString.push(rrString13)//closes player row
     }    
     tableString.push(rrString14)//closes tbody
-    workArea.append(generateTableWrapper(XforPredictionTable, YforPredictionTable, tableString.join(''), "rrTable"))
+    let tableWrap = document.getElementById("rrTable");
+    if(!tableWrap) workArea.append(generateTableWrapper(XforPredictionTable, YforPredictionTable, tableString.join(''), "rrTable"))
+    else tableWrap.innerHTML = tableString.join('')
 }
 
 function generateMatchListHoverTable(currentPlayer, aliData){
@@ -163,7 +165,7 @@ function generateMatchListHoverTable(currentPlayer, aliData){
     //needed: predictedMatches -> pla || plb -> .tag, .score I.E.: predictedMatches.plb.tag
     let hoverString = ["<table class = 'popup shadow'><tbody>"]
     let stringToPush
-    const hoverStringPredicted = ["<tr><th colspan='12'>Expected Scores</th></tr>"]
+    const hoverStringPredicted = ["<tr><th colspan='12'>Predicted</th></tr>"]
     const hoverStringCompleted = ["<tr><th colspan='12'>Completed</th></tr>"]
     const tdOpen = `<td class="popupscore"><b>`
     for(let i = 0; i<completedMatches.length; i++){

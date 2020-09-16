@@ -91,3 +91,34 @@
       transform: rotate(360deg);
     }
   }
+/**/
+@keyframes progressBar-animation {
+  0% {
+    width: 0%;
+  }
+  49% {
+    width: 80%;
+
+  }
+  50% {
+
+    width: 0%;
+  }
+  100% {
+
+    width: 80%
+  }
+}
+.progressBar {
+  height: 5px;
+  width: 80%;
+}
+.progressBar .bar {
+  position: absolute;
+  height: 5px;
+  background-color: black;
+  animation-name: progressBar-animation ;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
