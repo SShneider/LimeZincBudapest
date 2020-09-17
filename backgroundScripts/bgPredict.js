@@ -1,9 +1,10 @@
 
 //START FETCH GROUP PREDICTIONS FOR A NEW GROUP//
-async function fetchGroupPredictions(requestIn, apiKey, BoX, existingScores =''){
+async function fetchGroupPredictions(requestIn, groupType, apiKey, BoX, existingScores =''){
+  console.log(requestIn)
     let fetchedPredictions
     try {
-      fetchedPredictions = await fetch(`http://aligulac.com/api/v1/predictrrgroup/${requestIn}/?apikey=${apiKey}&bo=${BoX}${existingScores}`,
+      fetchedPredictions = await fetch(`http://aligulac.com/api/v1/${groupType}/${requestIn}/?apikey=${apiKey}&bo=${BoX}${existingScores}`,
       {
               'method':'GET',
               'headers':{

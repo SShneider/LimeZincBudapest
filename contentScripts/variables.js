@@ -10,14 +10,17 @@ let apiKey = 'X8HsOXXCVDayh3vRn75E'
 
 //START GENERATE PREDICTIONS VARIABLES//
 //start aligulac strings//
-const bestofN = "predictmatch"//exactly 2 players 
-const gslFormat = "predictdual"//exactly 4 players
-const singleElim = "predictsebracket"//number of players that is a power of 2
-const swiss = "predictrrgroup"
+const formatDict = {
+    bestofN:"predictmatch",//exactly 2 players 
+    gslFormat:"predictdual",//exactly 4 players
+    singleElim:"predictsebracket",//number of players that is a power of 2
+    swiss:"predictrrgroup"
+}
 //end aligulac strings//
-const singleMatchDict ={format: bestofN, bo: 1} //default dict
+
 const playerStatsDict = {}
 const groupPredictionDict = {}
+let predictionFormat = "swiss";
 let BoX = 3; //Best Out Of X, amount of games per match
 let completedMatchesDict = {}
 let groupArray = [] //returns an array of player ids from aligulac

@@ -4,11 +4,11 @@ chrome.runtime.onMessage.addListener(
         let data
         let errorStatus = 0
         if(request.source==="groupPredict"){
-          data = await fetchGroupPredictions(request.player, request.apiKey, request.BoX)
+          data = await fetchGroupPredictions(request.player, request.format, request.apiKey, request.BoX)
           let existingScores
           if(Object.keys(request.completedMatches)){
             existingScores = setExistingScores(data.matches, request.completedMatches)
-            data = await fetchGroupPredictions(request.player, request.apiKey, request.BoX, existingScores)
+            data = await fetchGroupPredictions(request.player, request.format, request.apiKey, request.BoX, existingScores)
           } 
           console.log(data)
         }else{

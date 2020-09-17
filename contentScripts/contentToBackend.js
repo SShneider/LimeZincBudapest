@@ -1,10 +1,11 @@
 function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn = "getplayer") {
+    console.log(predictionFormat, formatDict[predictionFormat])
     if (playerStatsDict[playerIn] && sourceIn === "getplayer") {
         processAliDataForPlayerStats(playerStatsDict[playerIn])
     }
     else {
         chrome.runtime.sendMessage({ player: playerIn, country: countryIn, race: raceIn,
-            apiKey: apiKey, source: sourceIn, completedMatches: completedMatchesDict, BoX: BoX},
+            apiKey: apiKey, source: sourceIn, completedMatches: completedMatchesDict, BoX: BoX, format: formatDict[predictionFormat]},
             async (response) => {
             if (response) {
                 if (response.action === "getplayer") {

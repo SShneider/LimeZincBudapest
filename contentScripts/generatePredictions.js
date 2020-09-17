@@ -23,30 +23,36 @@ function generateGroupListeners(){
     const groupElements = document.getElementsByClassName("grouptable")
     const groupMatchesElements = document.getElementsByClassName("matchlist")
     for(let i = 0; i<groupElements.length; i++){
-        let typeOfGroup = "swiss"
+        let thisGroupFormat = "swiss"
         let totalplayers = groupElements[i].getElementsByClassName("grouptableslot")
         let totalmatches = groupMatchesElements[i].getElementsByClassName("match-row")
-        if(totalplayers.length===4 && totalmatches.length===5) typeOfGroup = "gslFormat"
-        groupElements[i].getElementsByTagName("span")[0].addEventListener("dblclick", ()=>initiateGroupPredictions(event, groupElements[i], totalmatches, typeOfGroup))
+        //console.log(totalmatches, totalplayers)
+        if(totalplayers.length===4 && totalmatches.length===5) thisGroupFormat = "gslFormat"
+        console.log(thisGroupFormat)
+        groupElements[i].getElementsByTagName("span")[0].addEventListener("dblclick", ()=>initiateGroupPredictions(event, groupElements[i], totalmatches, thisGroupFormat))
     }
 }
 
 async function initiateGroupPredictions(event, origin, matchList, typeOfGroup){
+    
+    XforPredictionTable = event.pageX
+    YforPredictionTable = event.pageY
+
+    predictionFormat = typeOfGroup;
     if(event.target.dataset && event.target.dataset.groupid){//if group predictions are cached, fetch them
         if(groupPredictionDict[event.target.dataset.groupid]){
             generateRoundRobinTable(groupPredictionDict[event.target.dataset.groupid])
             return 
         }
     }
-    
+
     completedMatchesDict = {}
-    XforPredictionTable = event.pageX
-    YforPredictionTable = event.pageY
     groupArray = []
     predictPlayersNames = []
     playerRequests = []
     existingIdsFetch = []
     //reset global vars
+  
     workArea.append(generateTableWrapper(event.pageX, event.pageY, tablePlaceholderString, "rrTable"));
     console.log(matchList)
     BoX = generateGroupRule(origin)

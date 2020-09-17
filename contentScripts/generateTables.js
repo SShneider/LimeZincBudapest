@@ -75,9 +75,10 @@ function generatePlayerTable(X, Y, flag, race, player) {
 //make single player predict cache user 
 
 function generateTableWrapper(X, Y, htmlString, typeOfTable){
-    let  tableOut = document.createElement('table');
+    removeGeneratedTable(event, "aliTable")
+    let tableOut = document.createElement('table');
     if(typeOfTable==="generatedPlayerTable") tableOut.classList.add("matchlist", "wikitable", "aliTable", "shadow")
-    else if(typeOfTable==="rrTable") tableOut.classList.add("shadow","wikitable", "wikitable-striped", "wikitable-bordered",  "aliTable")
+    else tableOut.classList.add("shadow","wikitable", "wikitable-striped", "wikitable-bordered",  "aliTable")
     tableOut.setAttribute('id', typeOfTable)
     tableOut.innerHTML = htmlString.trim();
     tableOut.style.position = "absolute"
@@ -108,6 +109,7 @@ const rrString13 = `</tr>`  //Close Tr Tag
 const rrString14 = `</tbody>` //Closes body. Table is created by document. methods.
 
 function generateRoundRobinTable(aliData){
+    
     const tableData = []
     for(let i = 0; i<aliData.mtable.length; i++){ //unified sorting order between winrates and placement probability
         for(let j = 0; j<aliData.table.length; j++){
