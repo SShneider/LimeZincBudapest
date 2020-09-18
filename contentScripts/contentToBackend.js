@@ -36,7 +36,8 @@ function fetchPlayerData(playerIn, raceIn, countryIn, sourceIn = "getplayer") {
                         console.error("fetcherror")
                     } else {
                         groupPredictionDict[currentId] = response.aliData
-                        generateRoundRobinTable(response.aliData)
+                        if(response.aliData.mtable) generateRoundRobinTable(response.aliData)
+                        else if(response.aliData.table) generateDTTable(response.aliData)
                     }
                 }
             } else {
