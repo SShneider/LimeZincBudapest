@@ -41,7 +41,8 @@ async function initiateGroupPredictions(event, origin, matchList, typeOfGroup){
     predictionFormat = typeOfGroup;
     if(event.target.dataset && event.target.dataset.groupid){//if group predictions are cached, fetch them
         if(groupPredictionDict[event.target.dataset.groupid]){
-            generateRoundRobinTable(groupPredictionDict[event.target.dataset.groupid])
+            if(typeOfGroup === "swiss") generateRoundRobinTable(groupPredictionDict[event.target.dataset.groupid])
+            else if(typeOfGroup === "gslFormat") generateDTTable(groupPredictionDict[event.target.dataset.groupid])
             return 
         }
     }

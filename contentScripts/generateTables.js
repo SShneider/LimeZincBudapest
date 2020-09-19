@@ -161,6 +161,7 @@ const dtString1= `<tbody>
 <th style="min-width:21px"></th>
 <th style="min-width:21px"></th>
 <th style="min-width:100px">Player</th>
+<th style="min-width:21px">Top 2</th>
 <th style="min-width:21px">1st</th>
 <th style="min-width:21px">2nd</th>
 <th style="min-width:21px">3rd</th>
@@ -176,7 +177,7 @@ const dtString9 = `</tbody>`
 
 
 function generateDTTable(aliData){
-    console.log(aliData)
+    aliData.table.sort((a, b) =>  (b.probs[0]+b.probs[1])-(a.probs[0]+a.probs[1]))
     let tableString = [dtString1]
     for(let i = 0; i<aliData.table.length; i++){
         tableString.push(dtString2)//player # Open
@@ -190,6 +191,9 @@ function generateDTTable(aliData){
         tableString.push(generateMatchListHoverTable(aliData.table[i].player.tag.toLowerCase(), aliData))
         tableString.push(dtString3)//closes name 
         let maxProbability = (Math.max(...aliData.table[i].probs)*100).toFixed(2)
+        tableString.push(dtString7)//Opens top 2probability col
+        tableString.push("<b>"+((aliData.table[i].probs[0]+aliData.table[i].probs[1])*100).toFixed(2)+"%</b>")
+        tableString.push(dtString3)//Closes top 2 prob col
         for(let j = 0; j<aliData.table[i].probs.length; j++){
             tableString.push(dtString7)//Opens probability col
             let currentProbability = (aliData.table[i].probs[j]*100).toFixed(2)
@@ -215,15 +219,21 @@ function generateMatchListHoverTable(currentPlayer, aliData){
     const hoverStringPredicted = ["<tr><th colspan='12'>Predicted</th></tr>"]
     const hoverStringCompleted = ["<tr><th colspan='12'>Completed</th></tr>"]
     const tdOpen = `<td class="popupscore"><b>`
-    for(let i = 0; i<completedMatches.length; i++){
-        if(completedMatches[i].pla.score===Math.floor(BoX/2)+1 || completedMatches[i].plb.score===Math.floor(BoX/2)+1) {
-            matchesToProcess = completedMatches
-            stringToPush = hoverStringCompleted
+    for(let i = 0; i<predictedMatches.length; i++){
+        if (i<completedMatches.length){
+            if(completedMatches[i].pla.score===Math.floor(BoX/2)+1 || completedMatches[i].plb.score===Math.floor(BoX/2)+1) {
+                matchesToProcess = completedMatches
+                stringToPush = hoverStringCompleted
+            }
+            else{
+                matchesToProcess = predictedMatches
+                stringToPush = hoverStringPredicted
+            } 
         }
-        else{
+        else {
             matchesToProcess = predictedMatches
             stringToPush = hoverStringPredicted
-        } 
+        }
         let thisPlayer = 0
         let opponent = 0
         if(matchesToProcess[i].pla.tag.toLowerCase()===currentPlayer){
